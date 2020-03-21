@@ -1,0 +1,70 @@
+Index:
+--
+
+
+
+Hive:
+
+Traditionally, Hive query is internally translated to MapReduce job.
+Recently, supports pluggable execution engines: Tez, Spark.
+
+
+Every table is created as a directory.
+
+In traditional data sets we are inserting data into the tables row-by-row. IN Hive we just insert data as files.***, or load bulk of data atonce(Not row by row)
+
+After writing the data into hdfs, content of file cannot be changed.***
+Now as data cannot be changed, so update cannont be done.
+
+In traditional db, we can update rows in a table.
+
+In traditional db, we create a table first then insert the data, while in hive addition to this, the schema can be created after the data is already present in the hdfs.
+
+Tables can be created in two ways.
+1) Managed Tables (Internal Tables): -- table will be created as a directrory in warehouse, and data files will be in this directrory only.
+2) External Tables 
+
+Difference is that in internal tables, under warehouse a directrory of the name(tableName) of the table is created, and files are kept into it. while in  external table files are just kept into the location specified(no explicit directrory of tableName will be created).
+
+
+Now as we have a directrory in internal table, when we want to drop the table, then that directrory will be removed(thus the files inside that will also be removed.)
+In case of external table as there is no directrory structure, thus dropping the table will not lead to dropping the file from that location. 
+
+Note that in both internal and external tables, the file can be inserted with any name.(name same as table name is not required.)
+
+
+IN external table, one file can be refered by any number of tables.** example a single file contins both the employee and the deptarment data.
+
+
+
+
+
+Data into hive can be loaded in tow ways, 
+1. Local file system,  	-- hive> load data local inpath <filePath> into table <tableName>
+2. by HDFS 				-- hive> load data inpath <filePath> table <tableName>
+
+
+Metastore will store medadata about the table
+warehouse stores the data of the table.
+
+
+
+
+External vs Internal:
+
+
+
+Impala:
+
+Massively Parallel Processing(MPP)
+Heavy use of RAM.
+
+
+On every datanode there is an IMPALA  deamon instyalled.
+
+
+
+
+Sqoop:
+Sqoop has been written on top of map-reduce. by defautt 4 mappers and 0 reducers.
+can import entire or part of the table, all tables from a db.

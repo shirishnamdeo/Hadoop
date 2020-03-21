@@ -1,0 +1,148 @@
+Sqoop internally convertes command into a Map-Reduce task.
+Sqoop used YARN, which provided parallelism and fault-tolerence.
+
+RDBMS Supported:
+Teradata
+MySql
+Orache
+Netezza
+
+
+
+Q. Can sqoop be directly used to transfer data in Hive/Impala/HBase (and not just into files)?
+Sol:- Yes, to Hive and Habse
+
+
+Each sqoop mapper creates a connection with the database using JDBC.
+
+No Reduce phase n sqoop, only a map phase.
+
+$ sqoop help
+
+Sqoop supprts:-
+	Full Load :- Full table can be fetched as once
+	Incremental Load:- 
+	Compression:- 
+	Kerberos Security Integration:- Computer network authentication protocol which works tickets, to allow the nodes to communicate, to prove their identity to one another in secure manner.
+
+
+
+Sqoop is a tool designed to transfer data between Hadoop and relational database servers.
+Sqoop − “SQL to Hadoop and Hadoop to SQL”
+
+It is used to import data from relational databases such as MySQL, Oracle to Hadoop HDFS, and export from Hadoop file system to relational databases.
+
+After importing:- All records are stored as text data in text files or as binary data in Avro and Sequence files.
+
+
+
+
+qoop import \
+--connect jdbc:mysql://localhost/userdb \
+--username root \
+--table emp \
+--where “city =’sec-bad’” \
+--target-dir <new or exist directory in HDFS> \
+--m 1 (number of mapper jobs)
+
+
+Incremental Import
+Incremental import is a technique that imports only the newly added rows in a table. It is required to add ‘incremental’, ‘check-column’, and ‘last-value’ options to perform the incremental import.
+
+--incremental <mode>
+--check-column <column name>
+--last value <last check column value>
+
+--incremental append \
+--check-column id \
+-last value 1205
+
+
+
+-- TO import all the tables in database
+Each table data is stored in a separate directory and the directory name is same as the table name.
+sqoop import-all-tables \
+--connect jdbc:mysql://localhost/userdb \
+--username root
+
+
+
+Export:
+The target table must exist in the target database
+It is mandatory that the table to be exported is created manually and is present in the database to where data has to be exported.
+The default operation is to insert all the record from the input files to the database table using the INSERT statement. In update mode, Sqoop generates the UPDATE statement that replaces the existing record into the database
+
+sqoop export \
+--connect jdbc:mysql://localhost/db \
+--username root \
+--table employee \ 
+--export-dir /emp/emp_data\
+
+
+
+
+
+SQOOP Job:-
+sqoop job --create myjob \
+-- import \
+--connect jdbc:mysql://localhost/db \
+--username root \
+--table employee --m 1
+
+
+sqoop job --list
+sqoop job --show myjob
+sqoop job --exec myjob
+
+
+
+Sqoop Eval
+This chapter describes how to use the Sqoop ‘eval’ tool. It allows users to execute user-defined queries against respective database servers and preview the result in the console.
+
+$ sqoop eval (generic-args) (eval-args) 
+$ sqoop-eval (generic-args) (eval-args)
+
+
+sqoop eval \
+--connect jdbc:mysql://localhost/db \
+--username root \ 
+--query “SELECT * FROM employee LIMIT 3”
+
+
+sqoop eval \
+--connect jdbc:mysql://localhost/db \
+--username root \ 
+-e “INSERT INTO employee VALUES(1207,‘Raju’,‘UI dev’,15000,‘TP’)”
+
+
+
+
+$ sqoop list-databases (generic-args) (list-databases-args) 
+$ sqoop-list-databases (generic-args) (list-databases-args)
+
+ 
+sqoop list-databases \
+--connect jdbc:mysql://localhost/ \
+--username roo
+
+$ sqoop list-tables (generic-args) (list-tables-args) 
+$ sqoop-list-tables (generic-args) (list-tables-args)
+
+
+$ sqoop list-tables \
+--connect jdbc:mysql://localhost/userdb \
+--username root
+
+
+
+
+Sqoop Codegen:-
+Every database table has one data access object class,  that contain getter and setter methods to initialize the object.
+Codegen generates DAO class automically. (in java), based on table schema structure.
+
+scoop codegen 
+--connect
+--table 
+--username
+--password
+[An jar file will be generated. ]

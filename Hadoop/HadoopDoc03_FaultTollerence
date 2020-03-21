@@ -1,0 +1,150 @@
+
+
+
+Fault Tolerance with Replication __________________________________________________________________
+
+Faliure:
+
+Handling faliure of DataNode
+Handling faliure of NameNode 
+
+
+Either a block on a DataNode can be currupted or the entire DataNode can  go down?
+HDFS uses a replication factor to solve this fault tolerance. 
+Every single block is replicated.
+
+Replicas are stored on different nodes. Blocks of a certain file is copied to other machines. 
+replication factor 2 => two copies of BLOCKS, only two.
+
+Replication works on BLOCK level.
+
+
+Replica information also stored in the namenode table same as it stores the mapping of file blocks.
+NameNode stores entries of all the blocks and their replicated block location.
+
+
+Q. Who determines what node on the cluster should store which block? ***
+   That is who controls the replication strategy?
+
+
+Choosing replica locations need to balance tow constraints:
+1) we want to maximixe redundancy, more replicas more robust fault tolerance.
+2) minimize write bandwidth, updation should not cause writes to locations which are very far from eachother, leads to clogging of the intra-cluster bandwidth.
+
+
+Any cluster within a data centre, typically has machines which are stored in RACKS . Machines on a single rack are closed to eachother and they have very high bandwidth connection between them. A cluster is made up of machines which may be on different rack(possibly many racks).
+
+For more redundancy and increased fault tollerance, we want the Machines to be on different racks. 
+
+
+Intra-rack bandwidth will be higher than inter-rack bandwidth.
+Differenct racks can be on different geographicall locations, to save data from catastriphic events, may be even on different continents.
+
+MAximizing redudancy of data and increase fault tolerance, we want machines to be on different racks.
+Replicas should be stored far away from eachother.
+
+
+--to Minimize write bandwindth, we want to store replicas close to eachother.
+
+Typically the write operation happens like this:
+There is one node (DataNode or Namenode??) that runs replication pipeline, and this node choses the location of the first replica. This is typically chosen at random. Write operation will first write to this replica, the data then is forwarded to next replica location. If write operation is on different rack, then this write operation has to pass through inter-rack connection. then forwarded further for next replica.
+
+3 is the default replication factor fro hadoop.
+
+Inter rack bandwidth is less than intra rack bandwidth -> write operation is very expensive.
+
+so default hadoop strategy is devised further so as to balance both needs.
+For this the default hadoop strategy works: 
+The first node on which data will be placed is chosen at random. Any rack closest to client will be chosen, data will be placed there. The second location will then be placed on a different rack if possible. given, Disk resources have to be available. Once the second replica has been chosen hadoop will then trird replica on the same rack as the second, but on different node.
+-> 2 RACK AND 3 NODES.
+
+When a client want to read, it will be directed to the physically closest node.
+The write throgh operation will also performed on this closest replica and then replicated.
+
+
+
+
+
+
+
+
+
+NameNode faliure management _______________________________________________________________________
+
+As namenode contains the information of what file is stored on node, it is the most importat node in the cluster.
+
+Block locations are not persistent. The block locations are stored in memory for quick lookup. called Block Caching. 
+Now if namenode fails then file block locations information will be lost. 
+Q. So does it stored the mapping in Memory? 
+
+Each time a hadoop cluster is restarted, all the data nodes send its block locations for the files that is stores to the namenode so that the namenode  can store this in memory.
+Q. Is it possible that start the HDFS again with a brand new NameNode, as DN are sending its block and file infor to Namenode again, by which NameNode can again build its mapping?? ***
+
+
+If namenode failed, then the information about the whole cluster is lost.
+
+
+Faliure is mitigated in 2 ways:
+1) Metadata Files
+2) Secondary Namenode
+
+
+Metadata files: (to reconstruct the infromation in NameNode)
+a. fsimage files (file system image file)
+b. edits file.
+These two files stores the filesystem metadata and provides the backup for RECONSTRUCTING the namenode mapping in case of faliure. 
+
+fsimage holds the snapshot of the file system when the hadoop cluster is first started up. It is the current state of the file system when no operation have been performed on a fresh restarted. 
+fsimage file is then loaded into the memory.
+edits file contains logs information of all the edits on the files made across HDFS since Hadoop cluster restarted.
+
+fsimage and edits togethet give the current start of the file system.
+Both these files have a default backup location on the Local file system of the namenode, not on HDFS. 
+***Q. Does namenode node is not a part of HDFS??? 
+** Or does each server had a LocalFilesystem and a HDFS Filesystem both???
+
+      
+
+This cannot be on HDFS, as we need this to map where things are located on the HDFS. This can up can also be configured on the remote disk.
+
+backup located can be congigured in hdfs-site.xml
+
+set dfs.namenode.name.dir property to point to the backup location.
+multiple backup location can also be specific, by comma seperated value.
+
+
+merging these Metadata files for backing up is very expensive, as hadoop is long running, thus merging is very expensive.
+bring a system back online could take a very long time.
+
+
+
+
+Secondary NameNode:
+
+Second way to backed up the NameNode, by setting up a secondary namenode.     
+this will has the exact backup of the complete namenode. THe original namenode has its fsimage and edits, secondary namenode copies over these files, and runs on a completely different machine.
+
+checkpointing: way so that both the namenode and secondary namenode sync up their information to remain up to date.
+
+after the secondary namenode get its copy of the metadata files(fsimage and edits), it will then merge these two files togethet to get the updated fsimage file. It will apply every transaction/edit of the edit logs to get the updated fsimage file.
+Then this fsimage is transfered to the main namenode. NameNode will replace its fsimage with the checkpointed updated fsimage.
+Edits file on both the machine are now reset to empty.
+
+checkpointing is done at secific frequecy/ interval.
+
+
+
+During the faliure, the secondary namenode is promoted to be main namenode, and a new machine in the cluster is made secondary namenode.
+
+frequecy of checkpointing is set in hdfs-site.xml,  property name is dfs.namenode.checkpoint.period, and it is the number of seconds betweene each checkpoint.
+
+dfs.namenode.checkpoint.check.period : the period when the secondary namenode polls the namenode for un-checkpointed transactions.(this can be done before the expireof the checkpoint time specific before.)
+
+
+dfs.namenode.checkpoint.txns is transaction based on no of transaction between two checkpoint.
+[Not time based, instead it is transaction based]
+
+
+
+
+

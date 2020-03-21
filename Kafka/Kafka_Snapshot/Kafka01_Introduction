@@ -1,0 +1,560 @@
+Apache Kafka
+
+
+Linkedin:-
+High Volume:
+	-- 1.4 Trillion messages per day
+	-- 175 terabytes data per day
+	-- 650 terabytes of messages consumbed per day
+	-- Over 433 million users
+
+
+Kafka is a publish-subscribe messaging rethought as a Distributed Commit Log
+
+
+What is Apache Kafka?
+	-- A high throughput distributed messaging system.
+	-- Apache Kafka is about getting large amounts of Data from one place to another.
+	-- Rapidly, Scalaable and Reliably
+	-- In computing terms, a term for transfering data is messaging. 
+	-- Unlike other messaging systems, Apache Kafka is tailored for high through-put use cases, wehre vast 	amount of data need to be moved in Scalaable, Fault-Tolerant way.
+
+	-- Application generates data like:-
+		Logs, records in databases, key-value pairs, binary objects or messages etc.
+
+	-- When businesses change, the variety of data increases, making the types of applications and the data-stores change as well.
+
+	-- A lot of tools already exists to make this complex distribution topology possible. Most of there have been in technology tool-box for decades. 
+
+Most common is database replication and Log shipping.
+This is limited to certain kind of relational databases, that support Replication. 
+The way database impletes replication is very specific to the database, and therfore doesn't work across vendors. 
+So in a heterogeneous database environment, this becomes a limitation.
+
+
+ETL - Extract, Transforma and Load
+-- For integrating data between different sources and targets, ETL are implemented. 
+-- Enterprise based ETL is very costly. 
+-- Every ETL job that runs is a custom application, written by a developed who is specializes in ETL.
+
+
+
+
+Messaging System establishes a fairly simple paradigm for moving data between Applications, Data Stores.
+Traditional messaging system struggle with large scale implementations.
+
+The means to collect and distribute data as messages relies on the role fo the messaging broker, which is ofter time the bottleneck.
+
+-- Data Packte Size:- Larger messages puts severe strain on Message Brokers. This is a challenge as Broker cannot able to control messages coming from certain system. 
+
+-- Also a messaging environmet is dependent on the ability for message consumers to actually consume at a reasonable rate. 
+
+-- There is also a challenge of fault-tollerence. If a consumer pops something of the queue or reads it from a topic, its probably gone. So if the consumer loses a message or incorrectly process a message, it is extermly difficult to get it back to reporcess.
+
+
+
+Peril of Messaging Under High Volume
+Broker's jobs is to deliver or make available the messages to consuming applications, which consumes the messages at a reasonale rate. But under high volumes and variety of message sizes, the publisher can blast the BROKER with messages. 
+If the application has not implemented some sort fo throttling, the broker can be put into a tough situation fast. 
+Most messaging system are generally hosted on a single host, which generally relies on a limited amount of local or quoted storage. 
+Generally, this isn;t a problem, as most messaging systems are usually very effieicnt, provided they can turn over the messages they are receiving fast enough before the storage becomes limited.  
+But there is a problem when we have LAZY. SLOW or UN-RESPONSIVE consumer application.
+In this case the Broker's disk can gets full, the broker croaks, become unresponsive, and now the publishing application can't publish thre messages.  
+
+Another case is when there is a fault in the consuming application. Say due to a bug, the consumer processes a message incorrectly.
+Broker can only keep the message for some time, not very long.
+
+
+
+Multiple sources of data at different variety and velocities, 
+
+Need for transfer of data:
+	Cleanly -> Whihout a complex web of integration of different topologies
+	Reliable -> To reduce the impact of any one component slowness or availability 
+	Quickly  -> Real time use cases
+	Autonomously -> Reducing the coupling between components so we can improve or change parts of the system without a cascading effect. 
+
+
+Kafka:
+	High Throughput
+	Horizontally Scalaable
+	Reliable and Durable
+	Losely coupled Producers and Consumers -> One application rumtime conditions should not affect the others.
+	Flexible publish-subscribe semantics -> Independent data producing application would send data on the topic, and any interested consuming application could lister in and receive data on that topic, which it can process and even publist again for others to consume.
+
+As a CENTRAL BROKER of data, Kafka enable disparate applications and data stores to engage with one another with loosely coupled fashion by conveying data through messaging topics which KAFKA manages at scale and reliably. 
+
+
+
+
+Kafka Architecture: _____________________________
+
+
+Kafka is a messaging system. Specifically, its a publish-subscribe messaging system. 
+A publisher creates some data and sends the data to a specific location, from where an interested and  authorizer subscriber can retrieve the messaging and process it.
+ 
+Publisher -> Producers (Kafka)
+Subsribers -> Consumers 
+
+Producers and Consumers are simply the applications (the we write or use) that implement producing and consuming API's 
+
+And the specific location to which the messages is sent to (in Kafka) is called TOPIC
+
+Topics has names.
+Topics can be initialized upfront or on demand.
+
+As long as Producers and Consumers know the Topic Name and are authorized to send/recieve they can send and read messaged from a topic.
+
+
+Messages and their TOPICs needs to kept somewhere, as Messages are PHYSICAL containeer of Data. 
+BROKER is the place where Kafka keeps and Maintain its TOPICS. 
+ 
+Broker is a software process, also refered to as a executable or deamon service, running on a machine (a server). 
+The broker has the access to the resources on the Machine, such as FileSystem, which it uses to store messages which it categorizes as TOPICS.
+It is in the Kafka broker, where the differences between other messaging system becomes apparent.
+
+
+How the Kafka Broker handles messages and their topic, is what gives Kafka its high throughput capabilities.
+Acthiving high throughput is a function of how well a system can distribute its load and efficiently process it on multiple nodes in parallel.
+
+With Apache Kafka, you can scale out the number of Broker as much as needed to achieve the levels of throughput required, and all of this without affecting existing Producers and Consumers applications.
+
+Linkedin > 1400 Brokers, processing 2 Patabytes per week.
+
+
+
+A Kafka cluster is grouping of multiple Kafka Brokers. You can have single broker or multiple brokers on a single machine or on multiple machines.
+
+Cluster Size -> No of Brokers.
+Kafka cluster is thw grouping of Brokers. It doesn't matter if they are running on same or multiple machnes (as fas the cluster terminology is concerned)
+
+
+Distribute System -> Is a collection of resources that are instructed to achieve a specific goal or function.
+It consists of multiple workers/nodes.
+The system of nodes requires co-ordination to ensure consistency and progress towards a common goal. 
+
+Co-ordination avoids duplication of effort or individual worker nodes, undermining each other's work without knowing it. 
+
+In Kafka, these workers nodes are the Kafka brokers. 
+
+
+Within the distributed system, there is a hierarchy, that starts with a controlled or a supervisor. 
+A controlled is just a worker node like any other. It just happened to be elected from amongst its peers to officiate in the administrative capacty of a controller.
+In fact, the worker node selected as the controller, is commonly the one thats been around the longest, plus other factors.
+
+Critical responsibilities of Controller:-
+	-- Maintain the inventory of what workers are available to take on work. -> Attendence
+	-- Maintain a list of work items that has been commited to ans assigned to workers. -> Work Items
+	-- Maintain active status of Staff/Workers and their progress on assigned tasks.
+
+
+In Kafka:-
+	Controller + Workers -> Cluster
+	Workers/Members -> Brokers
+
+When a taskes comes in, say from a Producer, the controller has to make an decision which worked should take that task. 
+For this the ontroller needs to know who is available and is in good health, and very IMPORTANTLY what risk policy should govern its assignment decision.
+
+Risk Policy -> Like Redundancy Level. (What replication to employ in case an assigned worker failes.)
+Work already done should not be Lost.
+This means each task given to a worker must also be given to a worker peer.
+
+For a assignment, if the controller determines that redundancy is required, it will promote a worker into a LEADER, which will take direct ownership of the task assigned. 
+Say if 3 replicas neeed, then it will be the Leader's job to recruit tow of its peers to take part in replication. 
+
+In Kafka, the RISK POLICY to protect against the loss is known as the REPLICATION FACTOR. 
+
+Once peers have commited to the leader, a QUORUM is formed, and these commited peers take on a new role in relation to a leader, a FOLLOWER.
+
+If for some reason a Leader cannot get a QUORUM, the controller will reassign tasks to the Leaders that can. 
+
+
+In Kafka, the work that the Workers or Brokers performs is RECEIVING messages, CATEGORIZING them into topics, and RELIABLE persisting them for eventual retrieval. 
+
+Conparitively speaking, the efforts required to handle messages from the producers is substantially less then the effort required while handle messages to give it to consumers. 
+
+
+
+Every component within a distributed system has to keep some form of communication going between themselves. 
+This Communication refered to as Consensus/Gossip protocol.
+Like, events releated to Brokers make available and requesting Cluster Membership, or Broker Name loopup, retrieving bootstrap configuration settings, and notify new settings.
+Events like Controller and Leader election, Health status updates like heart beat events. 
+
+Apache Zookeeper
+Used in variety of distributed sysems for all the reasons mentioned above.
+	-- Zookeeper servers as a centralized service for metadata about vast clusters of distributed ndoes.
+	-- Configuration Information
+	-- Health status
+	-- Cluster synchronization status 
+	-- Cluster and Quorum group membership, including roles of elected nodes.
+	-- Systems like Hadoop, Hbase, Mesos, Solr, Redis, Neo4j depends on Zookeeper.
+	-- Zookeeper itself is a distributed system, and for it to run reliably, has to have multiple nodes which form what is called an 'Zookeeper Ensemble'
+
+Zookeeper provides the brokers (I believe broker's information instead) within a clusters to Kafka, and the Metadata about the cluster. 
+As this Metadata is constantly changing, connectivity and chatter between the zookeeper and the cluster members is required. 
+
+Netflix:
+4000+ Brokers, 36 clusters, 700 billion messages per day.
+
+
+
+
+
+Topics, Partitions, Brokers: ____________________
+
+Kafka Installation
+	-- Linux Recommended
+	-- Java 8 JDK
+	-- Scala Installed 2.11.x + (Kafka written in Scala)
+
+Note that the Kafka and Scala must be compatible, so check their version compatibility.
+
+Kafka installation itself have zookeeper jar, which means Kafka installation is self-contained, not require zookeeper to be installed prior and separately. 
+
+conf/server.properties -> Is the configuration file for the Kafka Brokers itself.
+bin/windows -> for Windows .bat files.
+
+
+
+Kafka Topics:
+	-- Primary abstraction of Kafka 
+	-- Kafka Topics are essentially just the named feed or category of messages. Its an addressable, referencable collection point for messages that producers sed messages to consumers retrieve messages from.
+
+	-- Kafka Topic stores the messages as time-ordered sequence of messages, that share the same category.
+
+	-- Topics is a LOGICAL entiry, and it VIRTUALLY span across entire cluster of Brokers, for the benifit of Scalability and Fault-Tolerence.
+	-- Producers and Controller don't really know or care about how the messages are kept, they just care about the Topic to work with. Producers just need to publish messages on the topic. How Topic is managed inside the Cluster of Brokers is not its convern.
+
+	-- Behind the scenes, for each TOPIC, the KAFKA cluster is maintaining one or more PHYSICAL LOG files.
+
+
+When a producer send a message(events) to a Topic, the messages are appended to a time-ordered sequential stream.
+Each messages are Immutable. Once they are received into a topic, thay cannot be changed.
+Somehow, if the producer sends the message which is incorrect or represents a fact that is no longer valid, its only recoruse is to follow up that previous messages with a newer more correct one. 
+It is the job of the consumer to reads them and processes them.
+
+
+This style of maintaining data as events is an architectural style knows as Event Sourcing.
+
+
+A KAFKA Message has:-
+	Timestamp -> Is set when a message is received by a Kafka Broker.
+	Unique Identifier -> Referenceable identifier.
+	Binary payload of data
+
+	--Combination of Timestamp and Identifier form its placement in the sequence of messages received within a Topic.
+	The identifier itself is referencable by the consumers in order for them to operate autonomously and effeciently. 
+
+	-- Kafka's one of the design goal was to theoritically make the message consumption possible for the message to be consumed by unlimited number of independent and autonomous Consumers.
+
+	-- There may be many consumers that are interested in receiving message at the same of different time. Furthermore, if a consumer errorneously process some messages, that fault should not have any impact o an other consumer or producer. Each should maintain its own operational boundary from one another. 
+
+
+Message offset:-
+	-- Helps consumer to read messages at their own pace and process them independently.
+
+	-- Offset
+		A placeholder, Last read message position. 
+		Offset is entirely established and maintained message consumer (Consumer maintains what it has read and what it has not read.)
+		Offset itself refers to the Message Identifier (described above).
+
+When a consumer wishes to read from a topic, it must establish a connection with a Broker. The consumer decides what messages it wants to consume.
+If the consumers has not read from the topic, or if had read, but again wants to read from the beginning of the topic, it will issue an statement to read from the beginning of the Topic. 
+
+Behind the scene, it is essentially establishing that its message offset for the topic is 0. And as its reads messages, it will move its offset accordingly.
+
+A consumer can choose to advance its position, stand on the offset, or go back to RE-READ another previously read messages, all without the producer, broker or other consumers know or care.
+
+When new message arrives, the CONNECTED consumers will receive an event indicating that there is a new message and consumers can read and advance its possition.
+
+When the last message in the Topic is read and processed, the consumer can set its offsetm and at that point is caught up.
+
+
+Kafka is IMMUNE to SLOW Consumers -> Becuase it has the means to retain messages over a long period of time. 
+Time it can retain messages is configurable and is known as Message RETENTION POLICY. (in HOURS) 
+Default -> 168 Hours (7 Days)
+
+Retention period is defined on per Topic basis.
+
+All messages are retains by the Kafka, regadless if a single consumer has consumed a message.
+
+
+
+
+
+To run kafka, atleast Zookeeper and one Broker is essnetial.
+
+zookeeper-server-start.sh -> need a configuration file to know how zookeeper should behave once started.
+Once zookeeper is started, it will wait for processes to connect to it.
+
+bin/zookeeper-server-start.sh config/zookeeper.properties
+
+
+
+telnet localhost 2181 -> To test zookeeper environment is running, and issue a zookeeper four-letter command, such as 'stat'
+
+standalone -> mode of zookeeper means there is only a single instance of zookeeper running. (For Development and testing purposes)
+
+
+bin/kafka-server-start.sh config/server.properties
+-> It will start and register Broker with the zookeeper server and is available to work.
+
+
+bin/kafka-topics.sh  
+
+bin/kafka-topics.sh --create --topic my_topic --zookeeper localhost:2181 --replication-factor 1 --partition 1
+
+	-- need to pass in zookeeper server, because there can be multiple zookeeper instances, each of them managing their own independentl cluster. By specifying the zookeeper here, we are essentially saying that I wanted to create a topic on this zookeeper managed cluster. 
+	It is Zookeeper component that is responsible for assigning a broker to be responsible for the TOPIC.
+
+	Q. Then, how are nodes differe from Broker? 
+
+Zookeeper scanned its registry of Brokers and made a decision to assign a broker as the Leader of the topic. 
+Senondly, on the broker, there is a logs directory, and in there a new directory is created, with the topic name and suffix.
+Within this directory, there are 2 files.
+	index files
+	log file -> Contains binary format
+
+
+Enquire about the topics avaibales on the cluster
+	bin/kafka-topics.sh --list --zookeeper localhost:2181
+
+
+producer:
+bin/kafka-console-producer.sh --borker-list localhost:9092 --topic my_topic
+
+Every message we type will cause the producer to sent the message to the Broker, which will then COMMIT it to its log, waiting for a consumer to consume them.
+
+
+consume:
+bin/kafka-console-consumer.sh --borker-list localhost:9092 --topic my_topic  --from-beginning
+
+
+
+Kafka architecture was built on COMMIT LOG
+	Source of Truth
+	Physically sotred and Maintained
+	Higher -order data structires derive from the Log
+	Logs are the point of recovery, ex transactional log in Traditional Database
+	Log are the basis of replication and distribution to occur for redundancy, fault-tollerence and scalability
+
+Kafka is a publish-subscribe messaging rethought as a Distributed Commit Log.
+Kafka is essentially a highly distributed Raw database (analogy from Traditional Database commit log), that brokers read and writes. 
+
+
+
+Kafka Partitions:
+Topic (a logical concept), is represented by on or more PHYSICAL LOG files called PARTITIONS.
+No of partitions in a topic depends on circumstances in which Kafka is intended to be used.
+No of partitions -> Configurable 
+
+Partition is the basis for which Kafka can achieve its ability to:
+	Scale out
+	Fault-Tolerent
+	High-Throughput
+
+Each partitions is maintained on atleast one or more Brokers.
+Each topic at minimum has to have a single PARTITION, as it the physical representation of the topic as a commit log stored on one or more brokers.
+
+Log on Broker filesystem, /tmp/kafka-logs
+
+/tmp/kafka-logs/{topic}-{partition}
+
+Physical Resources: CPU, Memory, Disk-Space, Netowork 
+
+Each PARTITION must fit entirely on ONE MACHINE. A single partition on multiple machines CANNOT be splitted.
+
+So if we have only one partition for a lagre and growing Topic, we will be limited by one broker node's ability to capture and retain messages being published to that topic. 
+
+
+
+In general, the scalability of Kafka is determined by the number of PARTITIONS being managed by muliple broker nodes.
+
+--partitions 3
+Suppose if 3 partitions is used for a topic, this means that the single topic to be split across three different log files, ideally managed by three different broker nodes. 
+
+Each partition is mutually exclusive from one-another, in that they recieve unique messages from a kafka producer producing messages on the same topic. 
+This enables each partition to share the burden of message load across multiple different broker node, and increase parallelism of certain operations, like message consumption.
+
+Kafka producer splits the messages across different partitions -> Based on partitioning scheme that can be established by the producer.
+Partitioning scheme is important to make the partition balanced for a topic.
+
+
+Q. *** Is there is distinguished KAFKA-Producer installed on the producer machine which takes care of the partitions?
+
+
+
+This is how partitions get distributed to the available brokers in the cluster.
+When a command to create a topic, with say, 3 partitions is issued, it is handeled by zookeeper., who is maintaining metadata regarding the cluster.
+
+Now, the zookeeper is specifically going to look at the available borkers and decide which brokers will be made responsible leaders for managing a single partition within a topic. 
+
+When this assignment is made, each unique Kafka broker will create a log partition directory for a newly assigned partition.
+(I believe additionally, the leaders will assing the peers for replication, as per replication policy)
+ 
+
+Additionally, as partition assignments are broadcast, each individual broker maintains a subset of metadata that zookeeper does, particularly the mapping of what partitions are managed by what brokers in the cluster.
+
+This enables any individual broker to direct the producer client to the appropriate broker for storing messages to a specific partition.
+
+Along the way, status is being sent by each borker to Zookeeper, so that a proper consensus can be maintained in the cluster. 
+
+When a procucer is ready to published messages to a a Topic, it must have knowledge of atleast one broker (just any brokers, or only brokers among the leaders of that topic?), so it can find the leaders of the topic-partition. 
+Q. *** How producer at the very first get acces to any broker in the cluster?
+
+
+Each broker knows which partitions are owned by which leader. 
+The metadata related to the topic is sent back to the producer so it can begin to send messages to the individual brokers participating in managing the topic-partition. 
+
+
+Consumers, operates much the same as producer does, but levarage Zookeeper a bit more.
+When consumer, consuming message from the cluster, the consumer inquires Zookeeper about which broker owns which partitions, and gets additional metadata that affects the consumer's consumption behaviour, particularly in the scenarion when there are large groups of consumer sharing the consumption workload. 
+
+
+Once the consumer knows about the borkers, with the partitions that makeup the topic, it will pull the messages from the brokers based on the message OFFSET per partition. 
+
+Beacuse messages are produced at multiple partitions, and pottentially at different times, consumers working with multiple partitions are likely to consume messages in different orders, and will therefore will responsible to handling the order (if required).
+
+
+More partitions increases the degree of parallelism in which consumers can consume those messages. 
+
+
+
+Partitions Trade-Off
+	The more partitions there are, the more entries zookeeper has to make to keep track of them, and since Zookeeper works on this resigtry in memory, the recources on zookeeper can become constrained. 
+	Though this can be mitigate by ensuring Zookeeper ensemble is properly provisioned, for the growth of topics and their partitions. 
+
+	Every message in each partition is totally orderd, in the sequence in which it is received. But as topic can has multiple partitions, thus there may not be a global order to messages in a topic across all the partitions.
+	This can be complex if the consuming application needs to have a Global Messaging order in the topic across all partitions. To get a global order wthout the consumer having to manage the ordering process, you may need to consider a SINGLE partition for a topic. -> Limited in terms of scalability as now there will be a single broker managing that topic single partition.
+
+	Alternativelt, we can intellengently use consumer or consumer groups to consume messages from the topic-partitions and handling the ordering process there. 
+
+	Also when we have higher number of partitions, the process of leader falling over to another can start to get time consuming. The fail-over process happens very fast, in low mini-seconds, but in large cluster with large number of partitions, this can start to add up. 
+	Which is why in big-big implemenations, we will see multiples clusters on their own. 
+
+
+
+Faults like:
+	What is the broker fails and become unresponsive?
+	What if there is a Netowork Issue which make broker unreachable?
+	What is the disk on the broker fails and data is inaccessible?
+
+
+When a broker is down, its the responsibility of the Zookeeper when it determines that a broker is down, to find another broker to take its place. And the metadata used for work distribution for either producer or consumers will get updated and the system will go on. 
+
+Redundancy of data is kept, so the the data kept by the failed broker is NOT Lost. -> Configurable. 
+--replication-factor N (N=1 means only one data)
+
+
+Replication Factors
+	-- Reliable work/data distribution. 
+	-- Makes cluster resilience 
+	-- Fault-Tolerent
+
+	-- With replication-factor = N, N-1 broker failure tolerance. 
+
+	-- replication-factor can be set per Topic basis.
+
+Wnen replication is more than one, it is the Leader's job to get the peer brokers to participate in the Quorum for the purpose of replicatig the log to achive the intended redundancy level. 
+When the leader has the Quorum, it will engage its peers to start copying the partition log. 
+
+When all the members of the replicatig Quorum are caught up, and a full synchronzed replica set is in place, it is reported throughout the cluster that the number of IN-SYNC-REPLICAS (ISR), is equal to the replication factor for that topic in each partition within it. -> Important Metric.
+
+When ISR == Replication Factor, -> Topic + Topic-Partitons is considered to be in health state. 
+
+If for any reason a Quorum cannot be established, and/or the number of ISR fall bwlow the replication-factor for that topic, intervention is required. 
+
+
+
+There might be reasons, a broker may not be able to replicate. And because of that Kafka doesn't automaically go out and search for a new following peer to replace the Quorum member.
+Q ** Why Kafka don't do this? -- I believe it does.
+
+
+Despite how resilient kafka is, vigilant monitoring and compensating actions are eneeded to eventually replace or tune a lagging or missing in action member of the Quorum. 
+
+
+
+
+Demo
+Creating multiple brokers
+Need to create a separate server.properties file for eacg borker we want to instantiate.
+ex.
+	server-1.properties
+	server-2.properties
+	server-3.properties
+
+Also when we have multiple brokers, when instantiating a producer, we need to pass the --broker-list parameter
+--borker-list localhost:9092 
+
+On Broker faliure, as an administrator when we see that there are less ISR than a replication-factor, then this tell there is a missing replica, Quorum is unhealthy and it needs to be replaced. 
+
+If there is another broker avaibale, Kafka woudl have already added that to the Quorum ans start replicating it. 
+
+
+
+
+
+
+
+
+
+Producing Messages with Kafka Producers: ________
+
+Write applications to publish messages to Kafka.
+Some important configuration properties tha affect the messages sending behaviour.
+
+Developing Environmet Setup
+	Adding Kafka Client Libraries
+	Java 8 JDK
+	Maven 3
+	Access to test Kafka Clusret (Atleast one running Kafka Broker)
+
+
+Kafka Client need an object to represents the required configuration properties needed to start up a producer. 
+3 required properties needed:-
+	bootstrap.servers 
+		-- Needed for the server to start-up.
+		-- Procuder doesn't connect to every broker referenced in the list, just the first available one. 
+		-- It uses the broker it connects to, to discover the full membership of the cluster.
+		-- Procuder user this list to determines the partition owners or leaders so that when it is ready to send messages, it can do so immediately. 
+		-- It is best practice to provide more than one broker in the proker list.  
+
+
+	key.serializer
+	value.serializer
+		-- Message content is binary encoded. To optimize the size for storage, network transistion and compression. 
+		-- Since, it the producer that serves as the beginning of the message life-cycle, it is responsible for describing how the message content are to be encoded so that the consumer can know how to decode them.  
+
+
+Configuration items are key-value pairs. Dictionary to hold this is createed using Properties() class. 
+
+
+KafkaProducer -> Is the Primary class, that makes the generic console applicaion an actual Kafka Procuder applicaion. 
+
+
+Inside the implemnetation fo Kafka Procuder, notice a type called ProducerConfig. 
+When a Kafka Procuder object is created, the properties are used to instantiate an instance of the ProcuderConfig class, and from there, all producer configuration is defined and referenced internally. 
+It is from this object, that the internal field for key and value serializer are initialized. 
+
+
+From the point of view of Kafka producer, it doesn't really send messages. 
+No type in a entire Kafka API called message, infact a class calles -> ProducerRecord, and it will represent what will be pubmish by Kafka producer.
+
+ProcuderRecord only required two values to be set in order for it to be considered a valid record that can be sent by a Kafka Procuder.
+	Topic
+	Value -> The message content
+Other optional values
+	Partition -> 
+	Timestamp -> Explicit setting of the timestamp to the producer record.
+		Timestamp is transmitted with the message. Long data type -> Additional overhead 8 Byte of payload. 
+		This overhead can affect the performance and throughput in high volume situations.
+
+		-- Actual timestamp that will be logged for a message will be based on setting defined in the broker's server.properties
+		log.message.timestamp.type = [CreateTime, LogAppendTime]
+	Key
+
+
+In the shell program, Serializer is hard-coded to use the String Serializer.
+
+If we were to try and create a producer record, that didn't match the serializer type specification for the producer, the producer would generate a runtime serialization expection. 
+

@@ -1,0 +1,176 @@
+
+
+
+Scheduling and Managing Tasks with YARN(Yet Another resources manager)
+YARN is added in 2013
+Yarn handles all the tasks running on our cluster.
+
+Understanding different Scheduling strategies eg: FIFO, Capacity and Fair Scheduler.
+
+Configuring multiple queue and setting up a job to run on a specific queue.
+
+MapReduce is used to defining what operation we want to perform on our data.
+YARN was responsible for determining how those processes need to be run and scheduled across the cluster.
+Yarn is responsible for coordinating all tasks on all machines in the cluster. 
+Yarn also keep track of all the resources across the cluster in terms of disk space, memory, CPU etc, and it assign new tasks to nodes based on the existing Capacity.
+
+If a node has failed and all the processes on that node has stopped, YARN will assing new nodes for that task so that processes can continue running.
+
+YARN is made up of two components, resource manager(the master process) and node manager(slave processes). Both of these are deamons which runs on different machines on the cluster.
+Resource manager runs on the master-node(Namenode) and the Node manager runs on all the other data nodes .
+One instance of Resource Manager Daemon and multiple instance of Node Manager Daemons.
+
+The Resource-Manager manages resources. Disk, memory, CUP are example of resources across all nodes on the cluster.
+
+NOde Manager only looks on the node that it is running on. It is responsible for Scheduling the individual tasks which runs on that node, and it communicates with the Resource Manager. 
+
+
+When we submit a job to a cluster, it goes to the ResourceManager, ResourceManager has a big picture understanding of what resources are available on what nodes in the cluster, and based on that it will find a NOde Manager on a node, which has some Capacity free and can accept this job.
+
+This NodeManager runs a process or a job within something called a Container. Container is a logical component inside which a process runs. A containe is defined by the resources, how much CPU, how much memory, how much disk space a particular job needs together forms a container inside which a process runs. 
+
+When a new process is required to be spun off on a node, the resources request for that process is made in the form of container. The task or the process that has been assinged to this container, it is the responsibility of the container to run this task. So the container executes that application.
+
+One NodeManager can have more than one container, which means it can have multiple processes running on that node. 
+
+After a container has been assigned on a NodeManager, the ResourceManager(master process) starts off an application master process within the container. The application master process is What is responsible for performing the computation and actually processing data.
+In case of mapreduce the application master process will be the mapper process or the reduce logic.
+The application master process is also responsible for determining whether additional processes are required to complete the task.
+Are there other mapper or reducer processes which need to be run so that the entire objective can be accomplished?
+
+If answer to this is yes, then the application master requests the ResourceManager running on the master node for additional resources. These additional resources are in the form of containers. So the node manager running the application master process requests containers for new mappers and reducers, which are required to accomplish the task.
+Requests include CPU requiremtns, memory requiremtns, may be disk space requiremtns.
+The ResourceManager once again scans the entire cluster and determine which nodes are available, which nodes have capacity free so that these additional processes can be run. An individual node manager will not have this information. A node manager knows only about itself. ResourceManager knows all nodes on the cluster.
+
+The same job is now given the additional resources in the form of additional nodes. The origional application master process which made the requests for the additional nodes, then starts off new application master processes on these new nodes that have been assigned by the resource manager.
+
+
+
+
+
+
+
+FIFO Scheduler:
+
+Say, YARN receives a MapReduce job that it has to schedule on hadoop cluster. It has to run a bunch of mapper processes. How does it determine where to run the mapper, on what nodes should the mapper be run? It uses something called the location constraint to determine where the mapper process should be located. An efficient use of the cluster resources is when we minimize the write bandwidth within a cluster. We dont want process running on one node, wtiring to another node on the other side of the cluster because it will choke up the inter-connectivity that exists between the machines.
+
+We want to assing the process to the same node where the data which has to be processed lives.
+
+The partition on which the mapper process has to be run should be co-located. We should avoid the overhead of having to copy or read data across machines in the cluster.
+
+If on a node, a new process come, and if there are already running process, and if CPU and memory is not available then typically the process has to wait. YARN has specific Scheduling policies for all the jobs that it runs.    
+These Scheduling policies are strategies and algorithms which determine how a taks is assinged to the cluster.
+
+
+FIFO scheduler: A job which is first submitted to the cluster get the priority and is run on the cluster(NOT JUST ON A SINGLE MACHINE, FULL CLUSTER). It takes up all available resources. If a new job comes it has to wait until the first job runs to completion. ONce a first job is complete, only then the second job is scheduled.   
+
+Once the job1 releases the resources, only then job2(even if it is just a small job) can starts its execution.
+
+FIFO can have huge waiting time. Rarely used by YARN
+
+
+
+
+Capacity Scheduler:
+
+Better alternative to FIFO
+Capacity Scheduler splits up the resources of the entire cluster into different queues. Capacity of the cluster is distributed amongst these queues.
+We can think of each queues as containing some memory, some CPU processing time, some disk space.  
+Each queues is allocated a share of cluster resources.  
+Another way to think is that some of the data nodes are allocated exclusively to each queue. 
+Q. Is it? Tha dirrefent queues on different DataNodes. I think then this will be an issue? ***
+
+For example we can say that the Queue used for emailing job has 30% of the resources and the Queue used for Search job has 70% of the recourses.
+
+Queues can be categorized and resources can be assigned accordingly, and based on the job category we can submit the job to a particular queues. Within a queues its FIFO scheduler.
+Then we need to submit the job to a particular queue. Jobs can be submitted to specific queues.
+
+Within a Queue its FIFO Scheduling.
+
+Jobs on different queues do not wait for job on other queue, They have their own queue resoueces.
+
+
+Disadvantage is cluster remains under-utilized.
+
+
+
+
+
+Fair Scheduler :
+
+overcomes the under-utilization problem of capacity scheduler.
+Resource in fair scheduler is always allocated propotionally to all jobs.
+If there are 5 jobs running on a cluster, each of them will get an equal share of resources available at cluster.
+
+Any job submitted to the cluster is immediately started and the resources available are split across all the jobs currently running.
+
+Zero wait time for any job.
+
+If first job comes. it gets all the resources. IF job2 comes, then all the available resources are divided into two equal parts. If job3 is submitted, the each will get 1/3 of resources. No job of the cluster has to wait. 
+
+We can configure any of the scheduler. Defalut policy in which hadoop comes installed with is Capacity Scheduling. 
+
+Actual scheduling policy will be set in yarn-site.xml. If nothing specific then it is capacity scheduling. 
+Set yarn.resourcemanager.scheduler.class property to 
+org.apache.hadoop.yarn.server.resourcemanager.scheduler.fair.FairScheduler
+this value is the algorithm. 
+
+
+
+
+
+  
+
+
+Hadoop default is Capacity Scheduler with one queue.
+Configure to have different queue for development and production work.
+
+
+open etc/hadoop/capacity-scheduler.xml, this is the configuration file to set up the queue for Capacity Scheduler.
+
+
+this property yarn.scheduler.capacity.root.queues, is used to define the list of queueq. By default there is only one queue in the list, named default.
+
+Q. How do we specify the capacity of the resources that is allocated to this queue?
+yarn.scheduler.capacity.root.default.capacity is the percentage capacity assigned to the default queue.
+
+While specifying the capacity to the different queue, we will simply need to change the word 'default' to be the new queue name. 
+We will now configure tow queue, dev queue and prod queue. 
+Specify the queue name as comma seperated list in queue property.
+
+<name>yarn.scheduler.capacity.root.queues</name>
+<value>dev, prod</value>
+
+
+now assing the capacity as 
+
+
+--change ..root.default to ..root.dev
+ <property>
+    <name>yarn.scheduler.capacity.root.dev.capacity</name>
+    <value>30</value>
+    <description>Default queue target capacity.</description>
+  </property>
+
+add another property block for prod queue
+
+<property>
+    <name>yarn.scheduler.capacity.root.prod.capacity</name>
+    <value>70</value>
+    <description>Default queue target capacity.</description>
+  </property>
+
+ensure total capacity should sum up to 100%
+save and restart YARN to pick up configuration.
+
+./stop-yarh.sh
+./start-yarn.sh
+
+
+now when we are submitting the job to hadoop, add the flag '-D mapreduce.job.queuename=prod' to submit to prod queue. If this flag is not specificed then  mapreduce will assume that the job is submitted to default queue, and as the default queue does not exist, -> ERROR.
+
+
+
+
+
+
