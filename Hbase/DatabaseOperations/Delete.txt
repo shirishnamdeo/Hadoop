@@ -1,0 +1,22 @@
+Deleting a single row (all cells from a row ) from hbase-table:
+
+delete '<table-name>', '<row>'
+delete 'metastrd:md_feed_catalog', '11001'
+
+
+
+Deleting a cell value:
+The below execution will delete a row from column family column-name. Remember Hbase is a columnar database.
+
+delete '<table-name>', '<row>', '<column-name>'
+
+
+
+
+delete '<table name>', '<row>', '<column name >', '<time stamp>'
+
+
+
+-- To delete all cells in a row
+deleteall '<table name>', '<row>'
+

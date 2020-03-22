@@ -1,0 +1,12 @@
+
+
+get 'metastrd:md_feed_catalog', '11001'
+--To get the single row.
+
+get 'metastrd:md_feed_catalog', '11001', {COLUMN => 'fc:data_class_cd'}
+--To get a single row, get all columns
+
+get 'metastrd:md_feed_catalog', '11001', {COLUMNS => ['fc:data_class_cd', 'fc:process_add_id']}
+
+
+
