@@ -1,0 +1,177 @@
+
+
+
+Initially in flat file system, there is no standard of storing the data. Everbody has implementes his own protocol.
+
+
+
+NoSql is also a database management system.
+Many Approaches:
+Key-Value -> we have a key which we can hash and find a value.
+Column-Value
+Graph databases
+Document databases 
+Hybrid Cache Store
+
+
+
+
+RDBMS is a relational database management system.
+Oracle, MySql, Postgress.
+
+OLAP system : data warehousing systems
+Phaseing out, data stores in 3d arrays
+
+
+RDBMS:
+Structured - organized, easy to join tables, search through it.
+Built in error checking, eg if foreign key dosen't exists.
+Reduce duplication, only update in one place 
+Fast joins
+	Cross indexed
+	Qury Optimizer
+Support
+Stablity
+
+ACID Compliance
+Atomicity -either whole or nothing, say if an operation is a multistep process, then either the whole set of updates happens or non will be reflected.
+
+Consistency -all the data written to database must be valid(foreign keys, data types, unique, not null)
+
+Isolation -stop collisions from multiple changes to same doc(only one at a time)
+
+Durability - once executed, data is immediately saved to disk
+
+
+But now we need speed, large data sets(Google, Facebook, Amazon), and handel unstructured data.
+
+noSql benefits:
+Flexibility
+	able to store non structured data***, different documents dont have to have same fields
+	easy to change filds
+NoSql is not ACID compliant, relations are slow, 
+
+NoSql allows us to store structured data but we can store data even if there is no logical category.
+
+
+Developed as a part of Apache HAdoop and runs on top of HDFS providing bigtable-like capabilities for hadoop. 
+
+
+
+
+
+http://d3js.org
+
+
+What is normalized data, or normalization***
+Can oracle be a distributed system?
+
+
+
+****************************************************************************************************************************************************************************
+
+
+Hbase:
+HBase:
+HBase is a NoSQL key/value database on Hadoop.
+
+Hbase is a noSql(non-relational), distrubuted database written in Java and runs top of HDFS providing Google's bigtable like capabilities for hadoop.
+
+It provides a fault-tolerant way of storing large quantities of sparse data (small amounts of information caught within a large collection of empty or unimportant data, such as finding the 50 largest items in a group of 2 billion records, or finding the non-zero items representing less than 0.1% of a huge collection).
+
+Real time
+
+HBase stores data in Key-Value.
+Both key, value are ByteArray types
+
+Column family
+
+Apache HBase is a NoSQL key/value store which runs on top of HDFS. Unlike Hive, HBase operations run in real-time on its database rather than MapReduce jobs. HBase is partitioned to tables, and tables are further split into column families. Column families, which must be declared in the schema, group together a certain set of columns (columns don’t require schema definition). For example, the "message" column family may include the columns: "to", "from", "date", "subject", and "body". Each key/value pair in HBase is defined as a cell, and each key consists of row-key, column family, column, and time-stamp. A row in HBase is a grouping of key/value mappings identified by the row-key. HBase enjoys Hadoop’s infrastructure and scales horizontally using off the shelf servers.
+
+HBase is perfect for real-time querying of Big Data. Facebook use it for messaging and real-time analytics. They may even be using it to count Facebook likes.
+
+
+
+
+
+
+****************************************************************************************************************************************************************************
+Scoop:
+Sqoop is a tool designed to transfer data between Hadoop and relational database servers. It is used to import data from relational databases such as MySQL, Oracle to Hadoop HDFS, and export from Hadoop file system to relational databases. This is a brief tutorial that explains how to make use of Sqoop in Hadoop ecosystem.
+
+
+
+
+
+
+
+
+
+****************************************************************************************************************************************************************************
+
+Hive:
+Hive is an SQL-like engine that runs MapReduce jobs.
+High level abstraction layer on top of map-reduce and apache spark.
+
+
+HiveQl
+
+Apache Hive is a data warehouse infrastructure built on top of Hadoop. It allows for querying data stored on HDFS for analysis via HQL, an SQL-like language that gets translated to MapReduce jobs. Despite providing SQL functionality, Hive does not provide interactive querying yet - it only runs batch processes on Hadoop.
+
+HQL queries are translated to map-reduce jobs.
+
+
+Hive should be used for analytical querying of data collected over a period of time - for instance, to calculate trends or website logs. Hive should not be used for real-time querying since it could take a while before any results are returned.
+
+
+
+
+
+****************************************************************************************************************************************************************************
+
+
+
+
+Impala:
+Impala’s open source Massively Parallel Processing (MPP) SQL engine.
+Hive is typically for batch processing while Impala is more of a interactive processing.
+
+Impala SQL
+It is aquery engine which runs on apache hadoop.
+Impala is designed for high concurrency and ad-hoc queries.
+When we issue a query in impala it goes directly to data.
+
+It uses/requires the same file, and data formats, metadata, security  and resource management frmawork as use by other components, like hive, pig, map-reduce.
+
+
+
+
+
+****************************************************************************************************************************************************************************
+
+Flume:
+
+
+Apache Flume is a distributed, reliable, and available service for efficiently collecting, aggregating, and moving large amounts of streaming data into the Hadoop Distributed File System (HDFS). It has a simple and flexible architecture based on streaming data flows; and is robust and fault tolerant with tunable reliability mechanisms for failover and recovery.
+
+
+
+
+
+
+
+****************************************************************************************************************************************************************************
+
+Pig:
+
+
+
+
+
+
+****************************************************************************************************************************************************************************
+
+
+
+
+ETL jobs***

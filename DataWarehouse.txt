@@ -1,0 +1,39 @@
+OBIEE - Oracle Business Intellegence Enterprise Edition
+EssBase 
+OLAP - Online Analytical Processing
+OLTP - Online Transaction Processing 
+Data Marts
+ETL - Extract Transform Load
+
+
+
+Business Intellegence:-
+BI is delivering relevant and reliable infromation to the right people at the right time, with the goal of achieving better decisions FASTER.
+
+Business intelligence (BI) comprises the strategies and technologies used by enterprises for the data analysis of business information.
+BI technologies provide historical, current and predictive views of business operations.
+Common functions of business intelligence technologies include reporting, online analytical processing(OLAP), analytics, data mining, process mining, complex event processing, business performance management, benchmarking, text mining, predictive analytics and prescriptive analytics.
+BI technologies can handle large amounts of structured and sometimes unstructured data to help identify, develop and otherwise create new strategic business opportunities.
+
+
+Collect ans Structure Data -> Convert it into information -> And represent it (into meaning actionable way) to improve business decisions.
+
+
+
+
+Facts and Dimensions and Measures
+
+Dimensional Modeling
+
+
+Fact Tables:- 
+In Fact table, foreign keys will be pointing to each of the dimension tables, + measure attributes.
+
+It contain numeric measures of the business.
+It almost always contain Date-Stampped data.
+Measures are typically additive.
+
+
+
+Star, Snowflakes Schema
+

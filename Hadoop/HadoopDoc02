@@ -1,0 +1,566 @@
+Installing Hadoop & Modes
+
+
+Hadoop preferable/recommended on UNIX systems.
+
+There are three modes in Hadoop installation:
+	1) Standalone
+	2) Pseudo-Distributed Mode
+	3) Fully-Distributed MOde
+
+
+
+Standalone Mode:
+Is the default Mode of Operations of Hadoop.
+It runs on a single machine, the local machine.
+In this mode it runs a single JVM process to simulate a distributed system.
+It used local files system for storage. HDFS does not run at all.
+
+HDFS dont run. All file manupulation is directly on the local file system.
+YARN also do not run, as there is no negotation for resources as all that exist is a single node. NO master slave system.
+
+Uses mostly for testing purposes. Checking the map-reduce logic before running them on cluster.
+
+
+
+Pseudo-Distributed Mode:
+Usefull when we want to do an advance level tests, simulate an actual cluster.
+Runs only on single node but 2 JVM process which runs on a single node to simulate two nodes. 1-Master and 1-Slave
+HDFS used for storage. Some portion of disc is used as HDFS storage.
+YARN also run to manage resources.
+Used to work on fully-fledge test environment.
+
+
+
+Fully-Distributed Mode:
+It is production environment.
+Runs on a cluster of machine. They can be physical Linux server or can be VM on cloud, eg Amazon servers.
+Installing hadoop on Fully-Distributed mode is a non-trivial opration, which requied a lot of configuration parameters.
+Use Enterprise edition of Hadoop for configuration. They package the Hadoop installs in such a way that is pre-configured.
+eg: Cloudera, MapR, Hortonworks.
+
+
+
+
+
+
+
+
+Installation in Standalone Mode:
+	Java version required 1.8+
+
+	1) Download Hadoop
+		Link:
+		http://www.apache.org/dyn/closer.cgi/hadoop/common/
+		http://www.apache.org/dyn/closer.cgi/hadoop/common/hadoop-2.8.1/hadoop-2.8.1.tar.gz
+		http://www-eu.apache.org/dist/hadoop/common/
+
+	
+	The unziped directory is the hadoop distribution directory.
+
+	etc --configuration files for hadoop environment
+	bin --various commands
+	share --lives the jars which we use, all hadoop libs live here
+	sbin
+
+
+	bin/hadoop is used to run jobs on hadoop
+	bin/hadoop jar ; jar option specifies the mapreduce jar. Run mapreduce jobs on hadoop cluster.
+
+	bin/hadoop jar share/hadoop/mapreduce/hadoop-mapreduce-examples-2.7.7.jar
+	[Example mapreduce jar file]
+
+	Q. hadoop has a jar utility but hdfs command do not have???***
+
+	hadoop jar share\hadoop\mapreduce\hadoop-mapreduce-examples-2.7.7.jar
+	[This jar contains code for multiple mapreduce progeams]
+
+
+
+	For standalone, we use the input files which will be hosted on our local files system. make a dir named 'input'
+	In this input dir, we will place the input files on which we want to run the mapreduce commands.
+	Copy some files into this input directory.
+
+	bin/hadoop command is used for various stuff. one of the usage is to run mapreduce.
+	an argument to it a 'jar', indicates that the mapreduce operation is specified in the Java Archive, a jar file. 
+	after it the jar file.
+
+	bin/hadoop jar [jarName] : it is used to run a jar file.
+
+	eg: bin/hadoop jar share/hadoop/mapreduce/hadoop-mapreduce-examples-2.8.1.jar
+	--this will give the help documentation.
+	--the above jar containes some of the mapreduce examples which comes with hadoop installation to play with.
+
+	--running simply this mapreduce jar will give us the help documentation on how we need to run the mapreduce examples. Jar contains code for multiple mapreduce programs.
+
+	--grep program : count the number of match of a regex. 
+
+
+
+	bin/hadoop jar share/hadoop/mapreduce/hadoop-mapreduce-examples-2.8.1.jar grep  inputDir/ outputDir 'dfs[a-z.]+'
+
+	--this will kickstart the mapreduce on the local filesystem, no HDFS no YARN. Output goes into the output direcotry.
+	-look into it.
+	-output directory should be a non existent directory, otherwise an org.apache.hadoop.mapred.FileAlreadyExistsException error.
+
+
+
+
+
+
+
+
+
+Installation in Pseudo-Distributed Mode:
+	
+	Mimics how hadoop will run on a actual cluster
+
+	Requirements 
+	1) 20% free space
+	2) having a secure shell 
+	Hadoop in Pseudo-Distributed mode and the Fully-Distributed mode requires SSH so that the master nodes can launch processes on slave. This communication is over ssh protocol. As this communication is very frequent and do not want to add an additional overhead of password authentication. So SSH should not prompt for password. 
+	Hadoop requires password less SSH for authentication, authentication needs to be done using PUBLIC_KEYS.
+	This is because the communication between Master and Slave is very frequent and we can't add a additional overhead of password authentication.
+	SSH (secure shell)
+
+
+	--in Pseudo-Distributed mode, ther is just one machine. Master slave architecture is simulated by running two JVM's instances on the same localhost.
+
+    AIM: Is to configure password less SSH
+
+	--How to make password less SSH:
+	For this it is needed to generate public keys for authentication.
+	ssh-keygen -t dsa -P '' -f ~/.ssh/id_dsa
+
+	-- Two key files will be generated, one for public and other for private use.
+
+
+	--ssh-keygen is the command to generate a key [also work in Windows]
+	--here it is generating a 'dsa' key, using digital signature algorithm
+	
+	-t dsa | ecdsa | ed25519 | rsa | rsa1
+             Specifies the type of key to create.  The possible values are “rsa1” for proto‐
+             col version 1 and “dsa”, “ecdsa”, “ed25519”, or “rsa” for protocol version 2.
+
+    -P is for providing the phrase, can be left blank
+
+	eg: ssh-keygen -t dsa -P ''
+	
+	-f Specifies the filename of the key file.
+
+
+	--public and private key is generates in file 'id_dsa' and  'id_dsa.pub' in ~/.ssh dir
+	
+	--now we need to add this key to the list of authorized keys on this machine(local host) to the list of ssh authorized keys 
+	$ cat id_dsa.pub >>  authorized_keys
+	$ cat ~/.ssh/id_dsa.pub >>  ~/.ssh/authorized_keys
+	
+	[The authorized_keys file in SSH specifies the SSH keys that can be used for logging into the user account for which the file is configured]
+	try-> ssh localhost 
+	Without the authorized_keys setup, it will ask for the user password login.
+
+
+	--IMP: we need to make some changes in the ssh config files
+	open the file /etc/ssh/sshd_config with sudo priveleges
+	
+	Note: if we create an rsa keys, and append them into the authorized_keys files then ssh will work with passwordLess authentication, without any configuration changes.
+	What about the dsa keys. Right now not working with dsa keys directly. 
+	
+	solution to this is : add this line to /etc/ssh/sshd_config file 
+	PubkeyAcceptedKeyTypes=+ssh-dss 
+	and same line to a 
+	~/.ssh/config file. adding into both is mandatory.
+
+	[In case dsa doesn't work, you can simply use rsa also too.]
+	just use 'ssh-keygen' command without any parameter, it will genetate rsa keys, and add them to authorized_keys.
+
+	try loggin into localhost $ ssh localhost (it must not ask for a password)
+
+	3) Setup environment variables
+	hadoop needs java to run, so it need to know where java is installed. 
+	Hadoop looks for the JAVA_HOME environment varibale
+
+	now go to /etc/hadoop -this dir contains all the configuration files for hadoop.
+
+	add two exports in the end
+	export JAVA_HOME=/usr/lib/jvm/java-8-oracle
+	export HADOOP_PREFIX=/home/notebook/Material/Hadoop/hadoop-2.8.1 
+	Q.? why to add JAVA_HOME as there is already a reference for JAVA_HOME??
+
+
+	4) for Pseudo-Distributed mode, we need to add some configuration parameters
+	each configuration files in hadoop conrresponds to one component of hadoop, like HDFS, YARN, Mapreduce etc.	
+
+	hadoop-env.sh 
+	export JAVA_HOME path_to_java_home [UNIX]
+	hadoop-env.cmd
+    set JAVA_HOME=D:\SoftwareInstalled\Java\JDK8\   [Windows Installation] --note is just till the base dir, not the bin
+
+
+	core-site.xml : is the configuration common across hadoop, not for specific component.
+	5. Update core-site.xml in etc/hadoop
+		<configuration>
+		        <property>
+			    <name>fs.defaultFS</name>
+			    <value>hdfs://localhost:9000</value>
+	        	</property>	
+		</configuration>
+	These properties are used by NameNode and DataNodes
+	fs.defaultFS -> property points to what file system we want to use. We want hdfs file system which can be accissible at port 9000 at localhost.
+
+
+	add inside configuration tag:
+	<property>
+		<name>fs.defaultFS</name>  --to tell what file system we want to use
+		<value>hdfs://localhost:9000</value> -- to tell the filesystem and can be accessed on localhost at the port 
+	</property>
+
+	
+    -- Configuring HDFS itself.
+	hdfs-site.xml
+	setup the replication factor to be one.
+	<property>
+		<name>dfs.replication</name>
+		<value>1</value>
+	</property>
+
+	[Windows Installation]
+	hdfs-site.xml
+	<configuration>
+		<property>
+			<name>dfs.replication</name>
+			<value>1</value>
+		</property>	
+		<property>
+		<name>dfs.namenode.name.dir</name>
+			<value>D:\SoftwareInstalled\Hadoop\Hadoop277\hadoop-2.7.7\data\namenode</value>
+		</property>		
+		<property>
+		<name>dfs.datanode.data.dir</name>
+			<value>D:\SoftwareInstalled\Hadoop\Hadoop277\hadoop-2.7.7\data\datanode</value>
+		</property>	
+	</configuration>
+	--Note: no blank lines
+	-- Use URI syntax: file:///D:/SoftwareInstalled/Hadoop/Hadoop277/hadoop-2.7.7/data/datanode/
+
+
+	As Pseudo-Distributed mode has only single node so replication factor has to be 1
+
+
+
+
+
+
+	mapred-site.xml
+	if the file dosen't exist, then create one and add this:
+	<configuration>
+		<property>
+			<name>mapreduce.framework.name</name>
+			<value>yarn</value>
+		</property>	
+	</configuration>
+
+	this framework specifices how we want to manage resources on the cluster. here using yarn as our resources negotiator.
+	Other possible values are 
+	local -> Running mapreduce locally, like in standalone mode.
+	classic -> Mapreduce version 1
+	yarn -> Mapreduce version 2 [yarn will be negotiating resources on the cluster]
+
+
+
+	yarn-site.xml
+	in this we will specificed the capabilites we want our mapreduce framework to have. these capabilites need to be monitored and managed by yarn.
+ 
+	<properties>
+		<name>yarn.nodemanager.aux-services</name>
+		<value>mapreduce_shuffle </value>
+	</properties>
+
+	this is a specific feature of mapreduce which allows the shuffline and sorting of the keys, as thay flow from map to reduce phases.
+
+	-- Here we specify the capabilites which we want for mapreduce framework.
+	-- these capabilites needs to be monitorer and managed by yarn, so we specified them here.
+
+	[Windows Installation]
+	yarn-site.xml
+	<configuration>
+	<property>
+		<name>yarn.nodemanager.aux-services</name>
+		<value>mapreduce_shuffle</value>
+	</property>	
+
+	<property>
+		<name>yarn.nodemanager.aux-services.mapreduce.shuffle.class</name>
+		<value>org.apache.hadoop.mapred.ShuffleHandler</value>
+	</property>	
+
+	</configuration>
+
+
+Starting the hadoop:
+
+	1) first thing to do is to format the name node. name node is the master node the cluster and keeps track of all the other nodes on which processes run.
+	we need to format this so that we have a fresh start.
+	$ bin/hdfs namenode -format
+
+	we can think of the namenode as the table of contents for where the data lives within our cluster. Make sure no error in messages.
+	If error, then rerun format or reinstall hadoop.
+
+	once we are done with formatting, we can start the master and slave nodes of the distributed file system by calling the command, in sbin dir :
+	$ start-dfs.sh
+
+    start-all [to start all services -- Depreciated though]
+
+	--ignore the warning for now
+	--to check that the nodes are indeed running, hadoop provides a web interface at port localhost:50070/
+
+	live node = 1, as we are running in Pseudo-Distributed mode.
+	NameNode Storage : is the place where it stores the log the what information is present on all the other slaves nodes.
+
+	create our directory on hdfs, which will be our home directory
+	bin/hdfs dfs -mkdir /user
+	bin/hdfs dfs -mkdir /user/shirish
+
+	this -mkdir is very similar as in linux commands.
+
+
+
+	$ jps
+	jps is a standard command line utility which comes with jdk, allows us to see the running java processes.
+	jps itself is a java process, we have NameNode, DataNode and SecondaryNode, there three are associated HDFS processed, these indicated that hdfs is up and runnung.
+
+	starting yarn:
+	$ sbin/start-yarn.sh
+
+	2 additional processes now, ResourceManager and the NodeManager
+	resources manager runs on the master node and node manager runs on all slaves nodes.
+	Now yarn processessbin have also been started.
+
+hdfs
+
+
+	hadoop provides built in tools to monitor the cluster.
+	localhost:8088
+	this gives the cluster view using resources manager using yarn.
+	Active node in cluster = 1
+	nodestatus for this active node is running
+
+
+
+
+ 
+	create an input directory on hdfs unbder our home directory.
+	$ bin/hdfs dfs -mkdir /user/shirish/input
+
+	then copy some files into it:
+	$ bin/hdfs dfs -put etc/hadoop/* /user/shirish/input
+
+	list the contents of the directory using:
+	$ bin/hdfs dfs -ls /user/shirish/input
+
+	now we will run mapreduce on these files.
+	command is exactly the same as we run on the standalone mode.
+
+	bin/hadoop jar share/hadoop/mapreduce/hadoop-mapreduce-examples-2.8.1.jar grep  /user/shirish/input/ /user/shirish/output 'dfs[a-z.]+'	
+
+	input and output directory should now point to the files on the hdfs file system, they are no longer on the local filesystem.
+
+
+	http://localhost:8088/cluster/ --cluster view
+	The web interface for the YARN resource manager which manges the entire cluster.
+	We will have all jobs here in the reverse chronological order.
+	within the same mapreduce job we have two individual mapreduce jobs
+
+	Active Node -> 1 (status: Running)
+
+	--to see the files data
+	bin/hdfs dfs -cat /user/shirish/output/*
+
+
+	hdfs dfs -put * /apps/notebook/mapreduce_testinput/  [in Pseudo-Distributed mode]
+	hadoop fs -ls /apps/notebook/mapreduce_testinput/
+	hdfs dfs  -ls /apps/notebook/mapreduce_testinput/ 
+
+	hadoop jar share\hadoop\mapreduce\hadoop-mapreduce-examples-2.7.7.jar grep testinput testoutput 'dfs[a-z.]+'   [Standalone Mode]
+	hadoop jar share\hadoop\mapreduce\hadoop-mapreduce-examples-2.7.7.jar grep /apps/notebook/mapreduce_testinput/ /apps/notebook/mapreduce_testoutput 'dfs[a-z.]+'   [Pseudo-Distributed Mode]
+	-- No data came into the output dir. But the job ran successfully.
+
+    hadoop jar share\hadoop\mapreduce\hadoop-mapreduce-examples-2.7.7.jar grep /user/Notebook/mapreduce_testinput/ /user/Notebook/mapreduce_testoutput/ 'dfs[a-z.]+'
+
+    -- I changes the path and made an input dir in /user/Notebook/ but still nothing got in output direcotry.
+   ?? Is there an issue with SSH, or somthing else in windows configuration? But not getting any error or exception.
+
+
+	
+	-- yarn application -kill application_1544880150632_0007
+
+	-- A lot of files has been created,check:-
+	dfs dfs -ls -R /
+
+
+
+
+
+
+
+
+---------------------------------------------------------------------------------------------------
+
+
+Storing Data in HDFS:
+
+
+HDFS is the default filesystem that is used along with Hadoop.
+Q. How to move files in and out of HDFS, from and to the local file system.
+Q. Managing replication strategies for data nodes
+Q. How to manager faliure of Namenode(master node)
+
+
+HDFS is suited for batch processing. ITt typically run very large jobs, long-running ones, which munch data for a long time.
+It is not a low latency system.
+Queries in hdfs are usually not not made in real time, they are not on the user path. Its not like that user type in a command and wait for retrieval of data from HDFS.  
+Data sotred in HDFS tends to be very very large in petabyte typically.
+
+Data in HDFS is semi-structured. It dosen't have clear formating like we have in relational databases. NO strict rows and columns. Here is it unformated and unstructured.
+
+Any data stored in HDFS is split across multiple storage disks where each disk is present on a different machine on a cluster.
+It is filesystem's responsibility to manage all the machines and their space, and this is done by master-slave configuration.
+
+HDFS chooses one machines as a random to be master node(Namenode). The master node is responsible for cordinating with all other slave nodes.
+Q. Is it? Choses one at random? ***
+
+
+On this master node, HDFS runs a java processes which receives all the requests which are made to the cluster, and then forward these requests to the slave nddes.
+This process is called NAME NODE, and so the name of the master is also designated as name node.
+Q. How gateway node know who is the NameNode in the cluster, ie where to send jobs to run? ***
+
+
+All other nodes have different process running on them, HDFS runs the DATA NODE process, and so the node are designated name as data nodes. 
+
+One name node pre cluster, and any number of data nodes.
+
+
+2 Main responsibility of name node:
+1) Manages the overall file system. No data is read from name node, but any request from the client is passed to the name node because it manages the overall filesystem and tell where we can find the data that we want.
+
+NameNode has the directory structure and knows which file is located on which node.
+
+Also has all the file metadata, other than the file content. eg: permission, how file is split up, where is the replica of the file etc.
+
+DataNode physically stored the files, the actual text, actual unformated, usually unformayted data.
+
+
+
+NameNode stores the Block Information and also all the replocated Block location information of each file.
+
+
+
+
+
+
+Consider a big file, say of size petabytes. This files will be broken into smaller chunks are called BLOCKS. Ecah of these blocks is sotred in different node of cluster. The entire file is not stored together on one node.
+
+Each of these blocks is of equal size. Different length file are treated the same way. This makes entire storage within the HDFS very simple. At any point of time we only deal with the block of the data. This block is also the UNIT for replication and faliure. So we dont keep multiple copies of the entire file, we keep multiple copies of the blocks of the file.
+
+Same size block => we always process the same amount of data. We DONT have one process processing a big block and another process processing a smaller block. 
+-> EQUAL SIZE BLOCK ENSURES EQUAL PROCESSING TIME FOR THE SAME TASK (on different nodes, help in parallelism)
+
+
+Optimum block size is 128MB, and is the size of block in HDFS.
+Each block is processed by a different processes. 
+Q. IS the number of processes equal to the no of blocks of that file?***
+
+
+If Increase block size -> Reduce parallelism
+Decrease block size > Increase the overhead, as one file will be processed into many process.
+Q. Can block size be changed after the HDFS setup? Or can only be possible in beginning?***
+
+
+
+
+
+
+Time taken to read the block from disk = seek time [] + actually read block time(transfer time).
+So by calculations, block size if 128MB seems to provide an optimum ratio.
+With todays transfer speed, seek time is roughly 1% of transfer time.   
+
+
+Q. Once the data is split into multiple block and stored seperately on different noded, how do we know where the splits of a particular file are located? How do we track down the data which belongs to a single file once we have spread it of on the cluster?
+
+The NameNode contains the mapping for everyfile of where the blocks of that file is located on the cluster. 
+
+Reading a file from HDFS is a 2 step process.
+1) Use metadata of the NameNode to loop up block locations.
+2) Read the blocks  from respective locations.
+Q. Who do this two step process? *** I mean who is going to namenode to get the metadata and then who go to data-node to collect data? ***
+S. I think client request comes to the NameNode which internally see where the data is, gets the data from the data node and returns the data to client.
+
+Q. What if data volume doesn't fit in Namenode while returning???***
+
+
+
+
+
+
+
+
+
+Interact with HDFS with command line interface
+
+bin directory of hadoop contains whole hadoop related command files.
+
+hadoop.cmd and hdfs.cmd both of this allow us to interact with file system hadoop.
+
+$ bin/hadopp fs : gives all the file system related command which we can use on HDFS.
+
+$ bin/hadoop fs -help: for the man page 
+$ bin/hadoop fs -help commandName
+
+hadoop fs and hdfs dfs are exactly similar, except that,
+difference betweek bin/hadoop fs and bin/hdfs dfs is that when we use with dfs -> it only deals with the HDFS file system. While hadoop command can also be used with other file system other than HDFS.
+
+bin/hdfs dfs -help 
+
+Creating a directory at rool level:
+hadoop fs -mkdir /test
+
+looking into directory:
+hadoop fs -ls /
+hadoop fs -ls /test
+
+in above output for a file, in second column we can see an interger number, it ist he replica nnumber. for Pseudo-Distributed mode, this will be one.
+
+
+
+copy files from local to HDFS:
+hadoop -copyFromLocal sourceFile-or-folder destinationFolder
+-put is same as -copyFromLocal
+this destinationFolder must exist before copying on HDFS, same as in linux
+-- Is there any difference?? 
+
+
+
+
+copy files in HDFS to same HDFS, in different location
+hadoop fs -mkdir /test2
+hadoop fs -cp /test/* /test2
+
+
+copy files from HDFS to local machine
+hadoop fs -copyToLocal /test2/* fromHdfs/
+-get can also be used for same 
+
+
+hadoop fs -cat : displays the file content
+hadoop fs -rm -r : to delete files and dir
+
+
+
+
+
+
+
+
+
+
+

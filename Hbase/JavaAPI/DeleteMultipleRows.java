@@ -1,0 +1,1 @@
+-- https://stackoverflow.com/questions/32598003/how-to-mass-delete-multiple-rows-in-hbase

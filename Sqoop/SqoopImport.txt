@@ -1,0 +1,30 @@
+
+
+
+Sample Sqoop Import:
+
+
+CONDITIONS="1 = 1"
+
+sqoop import \
+--connect jdbc:oracle:thin@//<server>:<port>/<database>.WORLD \
+--username username \
+--password password \
+--query "selct * from <table_name> where bus_date='2017-12-21' AND ROWNUM<10 AND \$CONDITIONS" \
+--target-dir '<directory-location>'
+-m 1
+
+
+#Note: In query when we use double quotes for enclosing characters, we need to escape '$' of the $CONDITIONS as '\$'.
+
+
+Other flags available:
+
+
+
+--null-string <null-string>	The string to be written for a null value for string columns
+--null-non-string <null-string>	The string to be written for a null value for non-string columns
+--append	Append data to an existing dataset in HDFS
+--fields-terminated-by <char>	Sets the field separator character
+
+--hive-drop-import-delims	Drops \n, \r, and \01 from string fields when importing to Hive.

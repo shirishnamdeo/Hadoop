@@ -1,0 +1,2 @@
+Exception message: CreateSymbolicLink error (1314): A required privilege is not held by the client.
+Solved: Run the command line as an Administrator

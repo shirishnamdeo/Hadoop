@@ -1,0 +1,9 @@
+
+#To delete an directory
+hdfs dfs -rm -r -f <dirPath> 
+
+
+#To test an directory
+hdfs dfs -test -d <dirPath>
+--this command doesnot give retunn an output on command line. It is the return code, we can check it with $? of bash. 
+--works, 0 when found a dir, 1 when no such dir

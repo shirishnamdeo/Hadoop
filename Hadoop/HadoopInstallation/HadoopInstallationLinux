@@ -1,0 +1,35 @@
+1. Install Java JDK
+	sudo apt-get install default-jdk
+	java --version
+
+2. Install Apache Hadoop 
+   https://hadoop.apache.org/releases.html
+
+
+sudo addgroup <group-name>	
+[addgroup command is used to create a new group on the Linux system]
+
+sudo adduser --ingroup <hadoop> <hadoopuser>
+[--ingroup -> is used to add the user in the group]
+[adduser is also used to just creare a normal user]
+
+
+https://www.howtogeek.com/50787/add-a-user-to-a-group-or-second-group-on-linux/
+https://www.computerhope.com/unix/adduser.htm
+[In Linux, a 'useradd' command is a low-level utility that is used for adding/creating user accounts in Linux and other Unix-like operating systems. The 'adduser' is much similar to useradd command, because it is just a symbolic link to it.]
+
+
+How to allow a newly/existing user to have sudo/elevited rights? 
+
+
+3. 
+	sudo apt-get install openssh-server
+
+	Set up the password less authentication.
+	$ ssh localhost : ssh to localhost must work without password
+
+
+4. 
+
+
+

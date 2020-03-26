@@ -1,0 +1,31 @@
+
+scan '<table-name>'
+scan 'metastrd:md_feed_catalog'
+
+
+
+scan 'metastrd:md_feed_catalog', {LIMIT => 10}
+--When querying this table we can't able to see the feed_id. When looking into the sql defination form sh file found out that this table has key defined on this column attritute, so that is the
+--reason it been showing as ROW in hbase shell.
+
+
+--Explicitely specifying the column family, if input non existing family then would get an error.
+scan 'metastrd:md_feed_catalog', {COLUMNS => ['fc'], LIMIT => 1}
+
+
+--To query a column of a particular family
+scan 'metastrd:md_feed_catalog', {COLUMNS => 'fc:data_class_cd', LIMIT => 10}
+
+
+
+scan 'metastrd:md_feed_catalog', {COLUMNS => ['fc:data_class_cd', 'fc:process_add_id'], LIMIT => 2}
+--Querying two or more columns
+
+
+
+
+scan 'metastrd:md_feed_catalog', 
+     { COLUMNS => 'colFam:colQualifier', 
+       LIMIT => 10, 
+       FILTER => "ValueFilter( =, 'binaryprefix:<someValue.e.g. test1 AsDefinedInQuestion>' )" 
+     }

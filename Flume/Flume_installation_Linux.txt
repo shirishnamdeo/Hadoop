@@ -1,0 +1,16 @@
+Download Flume:-
+http://mirrors.estointernet.in/apache/flume/1.9.0/apache-flume-1.9.0-bin.tar.gz
+
+
+export FLUME_HOME=
+export FLUME_BIN=
+
+export PATH=$PATH:$FLUME_BIN
+
+
+Run the below command to check if the flume setup.
+flume-ng --help
+
+
+
+Hadoop IPC Port:- http://localhost:9000/

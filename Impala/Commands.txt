@@ -1,0 +1,2 @@
+DESCRIBE <table-name>
+DESCRIBE FORMATTED <table-name>

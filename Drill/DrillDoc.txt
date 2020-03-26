@@ -1,0 +1,38 @@
+[https://drill.apache.org/docs/drill-introduction/]
+
+
+Apache Drill:
+
+Drill is an Apache open-source SQL query engine for Big Data exploration. 
+
+Drill is designed from the ground up to support high-performance analysis on the semi-structured and rapidly evolving data coming from modern 
+Big Data applications, while still providing the familiarity and ecosystem of ANSI SQL, the industry-standard query language. 
+
+Drill provides plug-and-play integration with existing Apache Hive and Apache HBase deployments.
+
+
+
+
+[https://mapr.com/blog/apache-spark-vs-apache-drill/]
+
+Spark vs Drill
+
+There are some similarities between the two projects. Apache Drill and Apache Spark are both distributed computation engines with support for Hadoop. They both have very low barriers to entry. Both are open source and neither requires a Hadoop cluster to get started with them. All that is really needed is a personal computer. They can be downloaded to any desktop operating system, including Windows, Mac OS X, or Linux, or they can be run inside a virtual machine to avoid cluttering up your system. Spark contains many sub projects and the piece that directly compares with Drill is SparkSQL.
+
+The differing approach to SQL reflects the major differences in the design philosophies of the two projects. Drill is fundamentally an ANSI SQL:2003 query engine, albeit an incredibly powerful one. Write your queries and they run against the data source, whether that is files on your computer, Hadoop cluster or a NoSQL database. Spark, on the other hand, is a general computation engine that happens to have SQL query capabilities. This enables you to do lots of interesting things with your data, from stream processing to machine learning.
+
+In Drill, you write queries with an SQL query, much the same way you would with Microsoft SQL Server, MySQL, or Oracle. In Spark, you write code in Python, Scala or Java to execute a SQL query and then deal with the results of those queries. Most importantly, the queries in SparkSQL are not written in ANSI SQL. SparkSQL only supports a subset of SQL functionality.
+
+
+
+
+
+
+The key takeaway is that Drill is designed to be a distributed SQL query engine for pretty much everything, and Spark is a general computation engine which offers some limited SQL capabilities. If you are considering Spark only for SparkSQL my suggestion is to reconsider and move in the direction of Apache Drill.
+
+If you need to perform complex math, statistics, or machine learning, then Apache Spark is a good place for you to start. If that isn't the case, then Apache Drill is where you want to be.
+
+If you need to use Apache Spark, but feel like its SQL support doesn't meet your needs then maybe you want to consider using Drill within Spark. Since Drill has a JDBC driver and Spark can leverage such a driver, Spark could use Drill to perform queries. Don't rule this out if you need the functionality of both Apache Spark and Apache Drill.
+
+
+
