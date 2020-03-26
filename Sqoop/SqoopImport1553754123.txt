@@ -45,4 +45,4 @@ sqoop import \
  
 
 LDAP ORACLE JDBC URL
-jdbc:oracle:thin:@ldap://oid_ldap_server_ny.corpny.csfb.com:1522/PLN55900_SVATPRD_DR_APP, cn=OracleContext, dc=uk, de=csfb,dc=com Idap: //oid_ldap_server_In.csfp.co.uk:1522/PLN559@0_SVATPRD_DR_APP, cn=OracleContext, dc=uk, dc=csfb, de=com
+jdbc:oracle:thin:@ldap://oid_ldap_server.com:1522/XXX5500_SVATPRD_DR_APP, cn=OracleContext, dc=<>, de=<> ,dc=com Idap: 

@@ -1,14 +1,14 @@
 # Note than in sqoop eval we dont need to pass the $CONDITIONS clause
 
 sqoop eval \
---connect jdbc: oracle: thin:@//PLNLOD2026-SCAN.eu.hedani .net:1522/PLN1680@.WORLD \
+--connect jdbc: oracle: thin:@//<server>:1522/PLN1780@.WORLD \
 --username USER_NAME \
 --password PASSWORD \
---query "select distinct(bus_date) from SPC_FV.FV_TRADE_DATA_LAKE_VIEW"
+--query "select distinct(bus_date) from <db>.<table-name>"
 
 
 result=`sqoop eval \
---connect "jdbc: oracle: thin:@//PLNLOD2026-SCAN. eu.hedani.net:1522/PLN168@0.WORLD" \
+--connect "jdbc: oracle: thin:@//<server>:1522/PLN178@0.WORLD" \
 --username "USER_NAME" \
 --password "PASSWORD" \
---query "select bus_date from spc_fv.FV_TRADE_DATA_LAKE_VIEW where ROWNUM < 10000 and bus_date > "$1" "`
+--query "select bus_date from <db>.<table-name> where ROWNUM < 10000 and bus_date > "$1" "`
