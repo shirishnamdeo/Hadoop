@@ -1,2 +1,0 @@
-http://data-engineer.in/2018/03/25/learning-apache-kafka-1-overview/
-[This blog contains a good number resources about Kafka to begin with]
