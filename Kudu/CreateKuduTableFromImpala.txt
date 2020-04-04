@@ -12,6 +12,15 @@ TBLPROPERTIES (
   'kudu.table_name' = 'my_kudu_table'
 );
 
+
+CREATE EXTERNAL TABLE dhtax_tm1connect_ibperf
+STORED AS KUDU
+TBLPROPERTIES (
+  'kudu.table_name' = 'dhtax_tm1connect_ibperf_kudu'
+);
+
+
+
 When the Kudu-HMS integration is enabled, internal table entries will be created automatically in the HMS when tables 
 are created in Kudu without Impala
 

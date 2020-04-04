@@ -1,0 +1,53 @@
+/cs/bdl/cfodlpc/actctrl/fde/scripts/jobs/j_dal_dr_replication.sh
+
+PFDE22000R 
+/cs/bdl/cfodlpc/actctrl/fde/scripts/jobs/j_dal_dr_replication.sh 22000 
+
+
+Method1: 
+	Copy/Insert the data in another Impala Table on HDFS as Parquet
+	[CREATE TABLE <dest_table_name> AS SELECT * FROM <source_table_name>] -- Note that with this way the new table will be populated with the records from the existing table.
+
+	The syntax for the CREATE TABLE AS statement that copies the SELECTED columns from another table
+	[CREATE TABLE new_table AS SELECT column_1, column2, ... column_n FROM old_table]
+
+	To not to copy data from source table to dest table use false where condition.
+	[CREATE TABLE new_table AS SELECT * FROM old_table WHERE 1=2]
+
+
+
+Method2: 
+# Override vars defined in mdshared.sh as we are running in YARN "client" mode and not in "cluster" mode
+export SPARK_DRIVER_EXTRAJAVAOPTS="-XX:MaxPermSize=1024m -XX:PermSize=256m -Djava.util.logging.config.file=parquet.logging.properties -Dlog4j.configuration=file:${META_CONFIG}/log4j.properties"
+export SPARK_DRIVER_CLASSPATH="${META_CONFIG}:$SPARK_DRIVER_CLASSPATH"
+export SPARK_SUBMIT_FILES="${SPARK_SUBMIT_FILES},${META_CONFIG}/dr-cluster.conf"
+export SPARK2_KUDU_JAR=/cs/cloudera/opt/cloudera/parcels/CDH-5.14.2-1.cdh5.14.2.p0.3/jars/kudu-spark2_2.11-1.6.0-cdh5.14.2.jar
+
+spark2-submit \
+ --name "DAL Kudu Replication" \
+ --master yarn \
+ --conf spark.yarn.principal=${HIVE_SCHEMA}@GBL.AD.HEDANI.NET \
+ --conf spark.yarn.keytab=/cs/${HIVE_SCHEMA}/${HIVE_SCHEMA}.keytab \
+ --deploy-mode client \
+  ${SPARK_YARN_ENV_VARS} \
+ --files ${SPARK_SUBMIT_FILES} \
+ --conf "spark.driver.extraJavaOptions=${SPARK_DRIVER_EXTRAJAVAOPTS}" \
+ --driver-class-path ${SPARK_DRIVER_CLASSPATH} \
+ --conf "spark.executor.extraJavaOptions=${SPARK_EXTRAJAVAOPTS}" \
+ --conf spark.executor.extraClassPath=${SPARK_EXECUTOR_EXTRACLASSPATH} \
+ --driver-memory 10G \
+ --driver-cores 4 \
+ --num-executors 2 \
+ --executor-cores 4 \
+ --executor-memory 20G \
+ --total-executor-cores 10 \
+ --jars $(echo /cs/cloudera/opt/jdbc/impala/*.jar | tr ' ' ','),${SPARK2_KUDU_JAR} \
+ ${FDH_UTILS_2_JAR} dal-kudu-replication replicate
+
+
+--> jars will have this list from echo statement: [hive_metastore.jar,hive_service.jar,ImpalaJDBC41.jar,libfb303-0.9.0.jar,libthrift-0.9.0.jar,log4j-1.2.14.jar,ql.jar,slf4j-api-1.5.11.jar,slf4j-log4j12-1.5.11.jar,TCLIServiceClient.jar,zookeeper-3.4.6.jar]
+--> export FDH_UTILS_2_JAR=${META_HOME}/lib/fdh-utils-2.0.jar
+
+
+
+
