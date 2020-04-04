@@ -1,0 +1,4 @@
+REQUEST_POOL=<your impala application pool>
+
+What is our application pool for F1 applications?
+And why is the default pool set to 1% only?

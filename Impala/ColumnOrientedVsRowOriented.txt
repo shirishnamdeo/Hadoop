@@ -1,0 +1,15 @@
+
+A column-oriented DBMS is a database management system (DBMS) that stores its content by column rather than by row. 
+This has advantages for data warehouses(how??) and library catalogues where aggregates are computed over large numbers of similar data items.
+
+------------------------------------------------------------------------------------------------------------------------------------------------------
+
+Analytic use-cases almost exclusively use a subset of the columns in the queried table and generally aggregate values over a broad range of rows. 
+This access pattern is greatly accelerated by column oriented data. 
+Operational use-cases are more likely to access most or all of the columns in a row, and might be more appropriately served by row oriented storage. 
+A column oriented storage format was chosen for Kudu because it’s primarily targeted at analytic use-cases.
+
+
+KUDU       --> Column Oriented Storage
+HBASE      --> Column Oriented Storage
+Cassandra  --> Column Oriented Storage

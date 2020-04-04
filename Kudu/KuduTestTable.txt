@@ -1,0 +1,42 @@
+CREATE TABLE actctrld.test_kudu2 (
+   col1 INT NOT NULL ENCODING AUTO_ENCODING COMPRESSION DEFAULT_COMPRESSION,
+   col2 STRING NULL ENCODING AUTO_ENCODING COMPRESSION DEFAULT_COMPRESSION,
+   PRIMARY KEY (col1)
+)
+STORED AS KUDU
+TBLPROPERTIES (
+        'COLUMN_STATS_ACCURATE'='false', 
+        'kudu.master_addresses'='usld2568568.am.hedani.net,usld2568572.am.hedani.net,usld2604183.am.hedani.net', 
+        'numFiles'='0', 
+        'numRows'='-1', 
+        'rawDataSize'='-1', 
+        'totalSize'='0')
+
+-- ERROR: AuthorizationException: User 'actctrld@GBL.AD.HEDANI.NET' does not have privileges to access: server1
+
+
+CREATE TABLE gbtaxdev.test_kudu (
+   col1 INT NOT NULL ENCODING AUTO_ENCODING COMPRESSION DEFAULT_COMPRESSION,
+   col2 STRING NULL ENCODING AUTO_ENCODING COMPRESSION DEFAULT_COMPRESSION,
+   PRIMARY KEY (col1)
+)
+STORED AS KUDU
+TBLPROPERTIES (
+        'kudu.master_addresses'='usld2568568.am.hedani.net,usld2568572.am.hedani.net,usld2604183.am.hedani.net'
+        );
+
+ERROR: AuthorizationException: User 'gbtaxdev@GBL.AD.HEDANI.NET' does not have privileges to access: server1
+
+
+
+
+CREATE TABLE my_first_table
+(
+  id BIGINT,
+  name STRING,
+  PRIMARY KEY(id)
+)
+PARTITION BY HASH PARTITIONS 16
+STORED AS KUDU;
+-- Table Created
+-- 

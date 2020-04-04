@@ -1,0 +1,17 @@
+Reference:
+http://www.cloudera.com/documentation/cdh/5-1-x/Impala/Installing-and-Using-Impala/ciiu_shell_options.html
+
+
+impala-shell -k -i servername:portname -B -q 'select * from table' -o filename '--output_delimiter=\001'
+${IMPALA_SHELL} -B -q "${vat_ico}" -o $local_file_loc/$UKVAT_IC_TRANSACTION_PREDICTION '--output_delimiter=|' '--print_header'
+
+impala -B -q "SELECT human_tax_cat, ml_tax_cat FROM svat_taxcode_predictions limit 10" -o query_result.txt --output_delimiter=',' --print_header
+
+impala-shell -B -q 'select * from requests limit 1' -o query_result.txt '--output_delimiter=,'
+impala-shell -B -f my-query.txt -o query_result.txt '--output_delimiter=,'
+impala-shell -B -f my-query.txt -o query_result.txt --print_header '--output_delimiter=,'
+
+
+FEED_PARAMS_RESULT=$(${IMPALA_SHELL} -B -d ${META_SCHEMA} -q "${FEED_PARAMS_QUERY}" --quiet "--output_delimiter=\n" 2>/dev/null)
+
+${IMPALA_SHELL} -B -q "${SQL}" -o query.csv '--output_delimiter=|' '--print_header'

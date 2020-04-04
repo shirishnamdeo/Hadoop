@@ -63,6 +63,10 @@ hbase-site.xml
 	<value>/home/notebook/Material/SoftwareInstall/Hbase/hbase-2.1.3-bin/zookeeper</value>
 </property>
 
+more properties also added in origional config. Refer that please.
+
+
+
 
 
 1. Setting up Hbase root directory in this property
@@ -88,5 +92,42 @@ Start Hadoop daemons first and after that start HBase daemon by hbase-start.sh
 Switching over to HBASE version 1.2 solved the issue. 
 
 -- Also notice that the /hbase directory is created in hdfs by HBASE 
+
+
+
+
+
+localhost:16010
+bin/hbase shell
+
+
+
+ERROR: master.HMaster: Failed to become active master
+Delete the /hbase directory from hdfs and restart the hbase service
+
+add: hbase-site.xml
+<property>
+  <name>hbase.unsafe.stream.capability.enforce</name>
+  <value>false</value>
+</property>
+
+-- http://hbase.apache.org/book.html#arch.overview
+-- http://hbase.apache.org/book.html#arch.overview--
+-- http://mail-archives.apache.org/mod_mbox/hbase-issues/201803.mbox/%3CJIRA.13143188.1520422689000.353637.1520427240160@Atlassian.JIRA%3E
+
+
+
+4611 NodeManager
+4420 ResourceManager
+3860 DataNode
+4149 SecondaryNameNode
+32743 HMaster
+1273 Jps
+458 HRegionServer
+3679 NameNode
+32671 HQuorumPeer
+[8 Services + 1 JPS]
+
+
 
 

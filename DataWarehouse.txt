@@ -37,3 +37,15 @@ Measures are typically additive.
 
 Star, Snowflakes Schema
 
+
+
+
+Database server has its own Oprating Systems(ex. Microsoft SQL server), runnong in Host OS(Windows OS).
+
+
+Physical Storage:
+SQL Server  stores its  database on disk, in upto three different files.
+.MDF file -> Primary Data File
+.LDF file -> Log File
+.NDF filr -> Secondary Data File
+

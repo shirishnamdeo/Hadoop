@@ -1,0 +1,17 @@
+${IMPALA_SHELL} -f ${SQL_SCRIPTS}/${VIEW_NAME}.sql --var=HIVE_SCHEMA=${HIVE_SCHEMA} --var=HIVE_SCHEMA2=${HIVE_SCHEMA2} --var=HDFS_APP_DIR="${HDFS_APP_DIR}" 
+$BEELINE -f ${SQL_SCRIPTS}/${VIEW_NAME}.sql --hivevar HIVE_SCHEMA=${HIVE_SCHEMA} --hivevar HIVE_SCHEMA2=${HIVE_SCHEMA2} --hivevar HDFS_APP_DIR="${HDFS_APP_DIR}" 
+
+
+
+impala-shell --var=table_name=staging_table --var=cutoff=2
+select s from ${var:table_name} order by s limit ${var:cutoff};
+
+
+set var:table_name='test1';
+
+
+
+SET VAR:TRAINING_COLUMNS=account, deptid, requestor_id, vat_rgstrn_id, tax_cd_vat, vat_calc_amt_bse, foreign_currency;
+SELECT ${VAR:TRAINING_COLUMNS} FROM dhtax_svat_invoice_myshop_stg LIMIT 10;
+
+-- Working in impala shell, but not in HUE

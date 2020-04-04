@@ -1,0 +1,1 @@
+${IMPALA_SHELL} -B -q '<sql_query>' -o <output_filename> '--output_delimiter=,'

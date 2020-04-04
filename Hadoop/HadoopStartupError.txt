@@ -1,0 +1,47 @@
+Namenode not showing in JPS
+hadoop namenode -format
+
+11264 NameNode
+12177 NodeManager
+12546 Jps
+11474 DataNode
+11989 ResourceManager
+11737 SecondaryNameNode
+[5 HDFS services + 1 JPS]
+
+
+Namenode at: hdfs://localhost:9000
+
+
+After HBase StartUP [3 HBase Services]
+11264 NameNode
+13792 HRegionServer
+12177 NodeManager
+11474 DataNode
+11989 ResourceManager
+13625 HMaster
+11737 SecondaryNameNode
+13547 HQuorumPeer
+14156 Jps
+
+drwxr-xr-x   - notebook supergroup          0 2020-04-01 02:29 /hbase
+
+
+
+Hive Error:
+FAILED: HiveException java.lang.RuntimeException: Unable to instantiate org.apache.hadoop.hive.ql.metadata.SessionHiveMetaStoreClient
+
+
+
+
+CREATE DATABASE IF NOT EXISTS notebookdb;
+
+CREATE TABLE notebookdb.test_table (
+    column1    STRING,
+    column2    INT,
+    column3    DOUBLE
+);
+
+INSERT INTO notebookdb.test_table VALUES ('value1', 1, 10);
+INSERT INTO notebookdb.test_table VALUES ('value2', 2, 20);
+INSERT INTO notebookdb.test_table VALUES ('value3', 3, 30);

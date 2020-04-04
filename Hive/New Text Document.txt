@@ -1,0 +1,6 @@
+set hive.msck.path.validation=ignore;  ?? What does it do.
+I set this once when MSCK repair isn't working and then it worked in DEV. 
+
+
+DESCRIBE EXTENDED
+DESCRIBE FORMATTED

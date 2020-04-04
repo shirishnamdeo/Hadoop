@@ -1,0 +1,9 @@
+Why this query is not working?
+INSERT OVERWRITE TABLE dhtax_tp_clientrevenue_equity SELECT * FROM dhtax_tp_clientrevenue_equity;
+
+Table: dhtax_tp_clientrevenue_equity is partitioned on reporting_date.
+ERROR: AnalysisException: Not enough partition columns mentioned in query. Missing columns are: reporting_year
+
+Seems like if table is partitioned then we need to overwrite every like:
+insert overwrite table target_table partiton(<partition spec>) select * from stg_table;  
+-- Why not all partitions can be overwritten at once?

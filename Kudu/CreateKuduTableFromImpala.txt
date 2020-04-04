@@ -1,0 +1,102 @@
+
+When a managed Kudu table is created from within Impala, the corresponding Kudu table will be named 
+impala::database_name.table_name
+
+------------------------------------------------------------------------------------------------------------------------
+
+Querying an Existing Kudu Table In Impala
+
+CREATE EXTERNAL TABLE my_mapping_table
+STORED AS KUDU
+TBLPROPERTIES (
+  'kudu.table_name' = 'my_kudu_table'
+);
+
+When the Kudu-HMS integration is enabled, internal table entries will be created automatically in the HMS when tables 
+are created in Kudu without Impala
+
+------------------------------------------------------------------------------------------------------------------------
+
+Creating a New Kudu Table From Impala:
+
+
+CREATE TABLE my_first_table
+(
+  id    BIGINT,
+  name  STRING,
+  PRIMARY KEY(id)
+)
+PARTITION BY HASH PARTITIONS 16
+STORED AS KUDU;
+
+
+-> In the CREATE TABLE statement, the columns that comprise the primary key must be listed first.
+-> Additionally, primary key columns are implicitly marked NOT NULL.
+
+
+------------------------------------------------------------------------------------------------------------------------
+
+CREATE TABLE AS SELECT:
+
+
+CREATE TABLE new_table
+PRIMARY KEY (ts, name)
+PARTITION BY HASH(name) PARTITIONS 8
+STORED AS KUDU
+AS SELECT ts, name, value FROM old_table;
+
+You can create a table by querying any other table or tables in Impala, using a CREATE TABLE …​ AS SELECT statement. 
+The following example imports all rows from an existing table old_table into a Kudu table new_table. 
+The names and types of columns in new_table will determined from the columns in the result set of the SELECT statement. 
+Note that you must additionally specify the primary key and partitioning.
+
+------------------------------------------------------------------------------------------------------------------------
+
+TBLPROPERTIES ('kudu.num_tablet_replicas' = 'n')   # By default repication factor is 3 tablet replication factor.
+
+A replication factor must be an odd number.
+Changing the kudu.num_tablet_replicas table property using ALTER TABLE currently has no effect.
+
+
+------------------------------------------------------------------------------------------------------------------------
+
+CREATE TABLE cust_behavior (
+  _id BIGINT PRIMARY KEY,
+  salary STRING,
+  edu_level INT,
+  usergender STRING,
+  `group` STRING,   
+  city STRING,
+  postcode STRING,
+  last_purchase_price FLOAT,
+  last_purchase_date BIGINT,
+  category STRING,
+  sku STRING,
+  rating INT,
+  fulfilled_date BIGINT
+)
+PARTITION BY RANGE (_id)
+(
+    PARTITION VALUES < 1439560049342,
+    PARTITION 1439560049342 <= VALUES < 1439566253755,
+    PARTITION 1439566253755 <= VALUES < 1439572458168,
+    PARTITION 1439572458168 <= VALUES < 1439578662581,
+    PARTITION 1439578662581 <= VALUES < 1439584866994,
+    PARTITION 1439584866994 <= VALUES < 1439591071407,
+    PARTITION 1439591071407 <= VALUES
+)
+STORED AS KUDU;
+
+
+->  Impala keywords, such as group, are enclosed by back-tick characters when they are not used in their keyword sense.
+
+-> Tables are divided into tablets which are each served by one or more tablet servers. Ideally, tablets should split a 
+   table’s data relatively equally. 
+   Kudu currently has no mechanism for automatically (or manually) splitting a pre-existing tablet. 
+   Until this feature has been implemented, you must specify your partitioning when creating a table. 
+   When designing your table schema, consider primary keys that will allow you to split your table into partitions which
+   grow at similar rates. You can designate partitions using a PARTITION BY clause when creating a table using Impala
+
+
+
+

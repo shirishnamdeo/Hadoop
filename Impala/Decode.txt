@@ -1,0 +1,81 @@
+DECODE( expression , search , result [, search , result]... [, default] )
+
+DECODE works like an IF-THEN-ELSE struct.
+
+
+
+DECODE((date1 - date2) - ABS(date1 - date2), 0, date2, date1)
+DECODE(SIGN(date1-date2), 1, date2, date1)
+
+DECODE(SIGN(actual-target), -1, 'NO Bonus for you', 0,'Just made it', 1, 'Congrats, you are a winner')
+
+LEAST(date1, date2)
+
+
+-- Expressions can be formulaes too, rather than just column names.
+SELECT supplier_id,
+DECODE(TRUNC ((supplier_id - 1) / 10), 0, 'category 1',
+                                       1, 'category 2',
+                                       2, 'category 3',
+                                       'unknown') result
+FROM suppliers;
+
+
+
+
+
+
+Question: I need to write a DECODE statement that will return the following:
+If yrs_of_service < 1 then return 0.04
+If yrs_of_service >= 1 and < 5 then return 0.04
+If yrs_of_service > 5 then return 0.06
+
+Answer: You will need to create a formula that will evaluate to a single number for each one of your ranges.
+For example:
+
+SELECT emp_name,
+DECODE(TRUNC (( yrs_of_service + 3) / 4), 0, 0.04,
+                                          1, 0.04,
+                                          0.06) as perc_value
+FROM employees;
+
+
+
+
+DEcode can also be used in JOIN
+WITH T2 AS
+(
+ select /*+ materialize */
+ decode(table2.f2,
+                         '1',
+                         'value1',
+                         '2',
+                         'value2',
+                         '3',
+                         'value3',
+                         '4',
+                         T1.f2) as join_sttmnt
+ , Table2.*
+from table2
+)
+select *
+  from Table1 T1
+  left join T2 on T1.f1 = T2.f1
+  and (join_sttmnt = T1.f2 or T2.f2 = '4');
+
+
+
+
+
+I need to write a query which basically needs to (left) join rows from two tables. My initial query looks like this:
+
+select *
+from Table1 T1
+left join Table2 T2 on T1.f1 = T2.f1
+         and (decode(T2.f2,
+                                 '1',
+                                 'value1',
+                                 '2',
+                                 'value2',
+                                 '3',
+                                 'value3') = T1.f2 or T2.f2 = '4');

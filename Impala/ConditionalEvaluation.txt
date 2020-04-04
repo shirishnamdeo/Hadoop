@@ -1,0 +1,17 @@
+CASE Construct:
+
+CASE
+    WHEN condition1 THEN result1
+    WHEN condition2 THEN result2
+    WHEN conditionN THEN resultN
+    ELSE result
+END
+
+
+CASE WHEN affiliate = '' THEN 'BLANK' WHEN affiliate = ' ' THEN 'BLANK' ELSE affiliate END
+
+
+
+IF Construct (in Select)
+
+SELECT IF (CONCAT(business_unit, '_', affiliate_mod) = bu_affiliate, 1, 0) FROM dhtax_ukvat_predict_hist; 

@@ -1,0 +1,90 @@
+
+INSERT OVERWRITE TABLE dhtax_tp_clientrevenue_equity(
+reporting_month      ,
+employee_pid_id      ,
+employee             ,
+department_cd        ,
+department           ,
+legal_entity_id      ,
+legal_entity_name    ,
+region_l6_nm         ,
+product_line_l2_name ,
+product_line_l3_name ,
+product_line_l4_name ,
+product_line_l5_name ,
+net_coverage_revenue ,
+feed_id              ,
+processing_region_cd ,
+process_add_id       ,
+process_update_id    ,
+stamp_add_dtime      ,
+stamp_update_dtime   
+)
+PARTITION(reporting_year)
+SELECT
+    product_line_l2_name      AS product_line_l2_name ,
+    product_line_l3_name      AS product_line_l3_name ,
+    product_line_l4_name      AS product_line_l4_name ,
+    product_line_l5_name      AS product_line_l5_name ,
+    reporting_month           AS reporting_month      ,
+    employee_pid_id           AS employee_pid_id      ,
+    employee                  AS employee             ,
+    department_cd             AS department_cd        ,
+    department                AS department           ,
+    legal_entity_id           AS legal_entity_id      ,
+    legal_entity_name         AS legal_entity_name    ,
+    region_l6_nm              AS region_l6_nm         ,
+    net_coverage_revenue      AS net_coverage_revenue ,
+    '110042'                  AS feed_id              ,
+    'GLOBAL'                  AS processing_region_cd ,
+    'FDH_BATCH'               AS process_add_id       ,
+    'FDH_BATCH'               AS process_update_id    ,
+    now()                     AS stamp_add_dtime      ,
+    now()                     AS stamp_update_dtime   ,
+    reporting_year            AS reporting_year       
+FROM dhtax_tp_clientrevenue_equity_stg;
+
+-- So even though I am giving alias name to every field, when inserting into core table if the select and inset has diferent order then everything is messed up. 
+
+Answer:
+INSERT OVERWRITE TABLE dhtax_tp_clientrevenue_equity(
+a,
+b,
+c,
+d)
+SELECT
+    d AS d ,
+    b AS b ,
+    a AS a ,
+    c AS c 
+FROM dhtax_tp_clientrevenue_equity_stg;  
+
+Why Impala insert into the incorrect columns? I have read in some articles that the order matters in Impala, irrespective of the alias name I give to attributes in SELECT query. 
+Yes - only order matters. You can call them whatever you want in SELECT. So giving an alias name is of no use in IMPALA.
+ 
+
+***** Solution: ONly solution is to select the data in the order in which you needs to insert into the target table. *****
+
+
+
+SELECT DISTINCT product_line_l2_name FROM dhtax_tp_clientrevenue_equity_stg;
++----------------------+
+| product_line_l2_name |
++----------------------+
+| Cash/ AEP            |
+| Prime Services       |
++----------------------+
+
+
+SELECT DISTINCT reporting_month FROM dhtax_tp_clientrevenue_equity ;                                                                                                                                                                                                                      
++-----------------+
+| reporting_month |
++-----------------+
+| Cash/ AEP       |
+| Prime Services  |
++-----------------+
+
+
+
+SELECT * FROM dhtax_tp_clientrevenue_equity_stg WHERE legal_entity_id = 'H11' and department_cd = 'J21J11' and reporting_month = '1' and employee_pid_id = 'M535753';
+SELECT * FROM dhtax_tp_clientrevenue_equity WHERE legal_entity_id = 'H11' and department_cd = 'J21J11' and reporting_month = '1' and employee_pid_id = 'M535753';

@@ -1,0 +1,5 @@
+concat(cluster_head_last_name,
+        case
+            when length(cluster_head_last_name) > 0 THEN ', '
+            else ''
+        end, cluster_head_first_name)                                              gch_name,

@@ -1,0 +1,100 @@
+CREATE TABLE internal1 (col1 string) LOCATION '/user/demo/food';
+--location is the directory name where the data file is placed on hadoop cluster.
+
+
+CREATE EXTERNAL TABLE chtaxprd.testtable1 (
+book_id string, 
+bus_date string,
+product_type1 string,
+)
+LOCATION '/apps/chtaxprd/data/testtable1/';
+
+
+
+CREATE TABLE pcmldev1.zTestCreateInternalTable (
+book_id string, 
+bus_date string,
+product_type1 string,
+product_id string,
+structure_id string,
+amt_tp string,
+country_code string,
+position Int
+)
+LOCATION '/apps/pcmldev1/data/testData_2017-12-21_10RecordSelectedColumns/';
+
+CREATE TABLE pcmldev1.zTestCreateInternalTable2 (book_id string,bus_date string,product_type1 string,product_id string,structure_id string,amt_tp string,country_code string,position Int) Location '/apps/pcmldev1/data/testData_2017-12-21_10RecordSelectedColumns/';
+
+#if location is not specified, then it will work.. ??Why this happen?
+
+
+CREATE TABLE pcmldev1.zTestCreateInternalTable (book_id string,bus_date string,product_type1 string,product_id string,structure_id string,amt_tp string,country_code string,position Int) ROW FORMAT DELIMITED FIELDS TERMINATED BY ‘,’;
+
+hive> show create table ztestcreateinternaltable;
+OK
+CREATE TABLE `ztestcreateinternaltable`(
+  `book_id` string, 
+  `bus_date` string, 
+  `product_type1` string, 
+  `product_id` string, 
+  `structure_id` string, 
+  `amt_tp` string, 
+  `country_code` string, 
+  `position` int)
+ROW FORMAT SERDE 
+  'org.apache.hadoop.hive.serde2.lazy.LazySimpleSerDe' 
+STORED AS INPUTFORMAT 
+  'org.apache.hadoop.mapred.TextInputFormat' 
+OUTPUTFORMAT 
+  'org.apache.hadoop.hive.ql.io.HiveIgnoreKeyTextOutputFormat'
+LOCATION
+  'hdfs://pcmldev/apps/pcmldev1/dwh/pcmldev1.db/ztestcreateinternaltable'
+TBLPROPERTIES (
+  'transient_lastDdlTime'='1514275537')
+
+  
+#an empty directory is created into /apps/pcmldev1/dwh/pcmldev1.db/ztestcreateinternaltable2, with no data. When the table is droped with the drop table statement, this directory is also deleted. 
+ 
+ #loading the data in the internal table;
+load data inpath '/apps/pcmldev1/data/testData_2017-12-21_10RecordSelectedColumns/part-m-00000' into table ztestcreateinternaltable;
+
+#for overwriting into the table use the keyword overright
+#LOAD INPATH '/user/chris/data/testdata' OVERWRITE INTO TABLE user
+
+
+#loading the data intot the above internal table will move the file from the origional location, thus after the load statement, the origional file will not be there anymore.
+#we can see the same file in the dwh/pcmldev1.db/<tablename> directory/
+#after loading data into hive, to reflect it into impala. we can use 'refresh tablename'.
+
+
+
+
+#We can add additional data into hive using the above load statemet only, data will be appended in table; But for reflecting that data into imapala we need to again invalidate the impala.
+
+#now in hive shell, query can be rnn, but impala dont show the results., need to refresh the Impala
+$ invalidate metadata ztestcreateinternaltable; --in impala shell.
+
+
+IP:
+when droping the table from 
+ 
+ 
+ 
+ 
+ beeline - no current connection
+ After entering into beeline shell, you need to give connection string to connect to Hiveserver2.
+ Please use below command in beeline shell to connect to HS2
+!connect jdbc:hive2://<hiveserver2-hostname-or-ip>:10000/<database-name>
+ If you have Kerberos enabled you need to connect as:
+!connect jdbc:hive2://<hiveserver2_hostname>:10001/<database_name>;transportMode=http;httpPath=cliservice;principal=<hive_principal>
+
+
+
+
+
+Creating External Table:
+
+create external table <tablename> (columns information) ROW FORMAT DELIMITED FIELDS TERMINATED BY '|' LINES TERMINATED BY '\n'  partitioned by (fieldName datatype)
+
+
+

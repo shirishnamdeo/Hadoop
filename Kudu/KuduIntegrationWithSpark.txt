@@ -1,0 +1,11 @@
+-- https://kudu.apache.org/docs/developing.html#_kudu_integration_with_spark
+
+
+------------------------------------------------------------------------------------------------------------------------------------------------------
+
+Kudu integrates with Spark through the Data Source API as of version 1.0.0. Include the kudu-spark dependency using the --packages option:
+
+spark-shell --packages org.apache.kudu:kudu-spark_2.10:1.5.0
+
+-- Use kudu-spark2_2.11 artifact if using Spark 2 with Scala 2.11.
+spark-shell --packages org.apache.kudu:kudu-spark2_2.11:1.10.0

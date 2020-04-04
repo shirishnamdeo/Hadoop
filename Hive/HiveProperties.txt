@@ -1,0 +1,2 @@
+set hive.msck.path.validation=ignore/throw;    -- To ignore/throw error while MSCK repair table.
+-- Today found out that in beat, msck repair was failing because of a %2 character in a partition value. Removing such partition from the table worked.

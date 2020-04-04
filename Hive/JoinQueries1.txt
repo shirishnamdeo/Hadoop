@@ -1,0 +1,104 @@
+CREATE TABLE gbtaxdev.employee ( 
+    emp_name           STRING COMMENT 'Employee Name',
+    emp_company        STRING,
+    emp_dept           STRING
+)                              
+COMMENT 'Employees Table'
+ROW FORMAT DELIMITED
+FIELDS TERMINATED BY ','
+LOCATION '/apps/gbtaxdev/dwh/gbtaxdev.db/employee';
+
+
+CREATE TABLE gbtaxdev.department( 
+    dept_name          STRING,
+    dept_company       STRING                  
+)                              
+COMMENT 'Department Table';
+
+
+CREATE TABLE gbtaxdev.company(
+    company_name       STRING
+)
+COMMENT 'Company Table';
+
+
+
+INSERT INTO TABLE employee (emp_name, emp_company, emp_dept) VALUES ('name1', 'company1', 'dept1');
+INSERT INTO TABLE employee (emp_name, emp_company, emp_dept) VALUES ('name2', 'company1', 'dept1');
+INSERT INTO TABLE employee (emp_name, emp_company, emp_dept) VALUES ('name3', 'company1', 'dept2');
+INSERT INTO TABLE employee (emp_name, emp_company, emp_dept) VALUES ('name4', 'company1', 'dept2');
+INSERT INTO TABLE employee (emp_name, emp_company, emp_dept) VALUES ('name5', 'company2', 'dept1');
+INSERT INTO TABLE employee (emp_name, emp_company, emp_dept) VALUES ('name6', 'company2', 'dept3');
+INSERT INTO TABLE employee (emp_name, emp_company, emp_dept) VALUES ('name7', 'company2', 'dept4');
+
+
+
+INSERT INTO TABLE department (dept_name, dept_company) VALUES ('dept1', 'company1');
+INSERT INTO TABLE department (dept_name, dept_company) VALUES ('dept2', 'company1');
+INSERT INTO TABLE department (dept_name, dept_company) VALUES ('dept3', 'company1');
+INSERT INTO TABLE department (dept_name, dept_company) VALUES ('dept1', 'company2');
+INSERT INTO TABLE department (dept_name, dept_company) VALUES ('dept10', 'company2');
+
+
+INSERT INTO TABLE company (company_name) VALUES ('company1');
+INSERT INTO TABLE company (company_name) VALUES ('company2');
+INSERT INTO TABLE company (company_name) VALUES ('company3');
+
+---------------------------------------------------------------------------------------------------
+
+
+SELECT * FROM employee ORDER BY emp_name;
+SELECT * FROM department ORDER BY dept_name;
+SELECT * FROM company ORDER BY company_name;
+
+
+
+
+-- JOINS ------------------------------------------------------------------------------------------
+
+
+SELECT * FROM employee CROSS JOIN department ORDER BY emp_name;			   --CROSS JOIN anyways dont have an ON condition.
+SELECT * FROM employee INNER JOIN department ORDER BY employee.emp_name;   --INNER JOIN without the ON conditions produces a CARTESIAN JOIN.
+SELECT * FROM employee JOIN department ORDER BY employee.emp_name;         --Same as above, result set is a CARTESIAN JOIN.
+SELECT * FROM employee JOIN department ORDER BY employee.emp_name;         --Same as above, result set is a CARTESIAN JOIN.
+--Without ON condition all the above four behave as CARTESIAN JOIN.        
+
+
+[INNER JOIN == JOIN]
+SELECT * FROM employee INNER JOIN department ON employee.emp_dept = department.dept_name ORDER BY emp_name;
+SELECT * FROM employee JOIN department ON employee.emp_name = department.dept_name ORDER BY emp_name;
+--If ON condition is specified, both above behaves as INNER JOIN, fetching only the matched records. If ON condition is not satisfied then that 
+--join record do not appear in result set.
+
+
+[LEFT OUTER JOIN == LEFT JOIN]
+SELECT * FROM employee LEFT OUTER JOIN department ON employee.emp_dept = department.dept_name ORDER BY emp_name;
+SELECT * FROM employee LEFT JOIN department ON employee.emp_dept = department.dept_name ORDER BY emp_name;
+--LEFT JOIN and LEFT OUTER JOIN is same. Giving NULLS for non-matching values.
+
+
+SELECT * FROM employee RIGHT OUTER JOIN department ON employee.emp_dept = department.dept_name ORDER BY emp_name;
+SELECT * FROM employee RIGHT JOIN department ON employee.emp_dept = department.dept_name ORDER BY emp_name;
+
+
+
+SELECT * FROM employee FULL OUTER JOIN department ON employee.emp_dept = department.dept_name ORDER BY emp_name;
+--
+SELECT * FROM employee LEFT OUTER JOIN department ON employee.emp_dept = department.dept_name
+UNION
+SELECT * FROM employee RIGHT OUTER JOIN department ON employee.emp_dept = department.dept_name ORDER BY emp_name;
+--FULL OUTER JOIN is actually a UNION (or may be UNION ALL --still needs to verify), of the LEFT OUTER JOIN and RIGHT OUTER JOIN combined.
+--It returns all rows from the both tables that fulfill the JOIN condition. The unmatched rows from both tables will be returned as a NULL.
+
+
+
+SELECT * FROM employee LEFT SEMI JOIN department ON employee.emp_dept = department.dept_name ORDER BY emp_name;
+--With the left semi join, only data from the left table is returned for rows where there is matching data in the right table. 
+--Only one instance of each row from the left table is returned, regardless of how many matching rows exist in the right table.
+
+
+
+SELECT * FROM employee LEFT ANTI JOIN department ON employee.emp_dept = department.dept_name ORDER BY emp_name;
+--The LEFT and RIGHT keywords are required for ANTI JOIN. For LEFT ANTI JOIN, this clause returns those values from the left-hand table that 
+--have no matching value in the right-hand table. And vice-versa for RIGHT ANTI JOIN.
+

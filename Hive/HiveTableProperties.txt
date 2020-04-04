@@ -1,0 +1,6 @@
+| ROW FORMAT DELIMITED FIELDS TERMINATED BY '\u0001' LINES TERMINATED BY '\n'                                |
+| WITH SERDEPROPERTIES ('field.delim'='\u0001', 'line.delim'='\n', 'serialization.format'='\u0001')          |
+| STORED AS TEXTFILE                                                                                         |
+| LOCATION 'hdfs://pcmldr/apps/ctrtuat1/data/dhgf_ic_recharges_psoft'                                        |
+| TBLPROPERTIES ('DO_NOT_UPDATE_STATS'='true', 'STATS_GENERATED_VIA_STATS_TASK'='true', 'numRows'='6927650') |
++------------------------------------------------------------------------------------------------------------+

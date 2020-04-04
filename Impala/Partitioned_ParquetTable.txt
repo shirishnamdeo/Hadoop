@@ -1,0 +1,9 @@
+ CREATE TABLE <database>.<table_name> (                                 
+                                                          
+ )                                                                             
+ PARTITIONED BY (                                                              
+   column1 STRING,                                                                
+   column2 STRING                                                             
+ )                                                                             
+ STORED AS PARQUET;
+

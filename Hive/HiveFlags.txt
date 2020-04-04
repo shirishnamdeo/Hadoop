@@ -1,0 +1,5 @@
+Run Query                    hive -e 'select a.col from tab1 a'
+Run Query Silent Mode        hive -S -e 'select a.col from tab1 a'
+Set Hive Config Variables    hive -e 'select a.col from tab1 a' -hiveconf hive.root.logger=DEBUG,console
+Use Initialization Script    hive -i initialize.sql
+Run Non-Interactive Script   hive -f script.sql

@@ -1,0 +1,56 @@
+
+https://impala.apache.org/docs/build/html/topics/impala_install.html
+
+
+export IMPALA_HOME=/home/notebook/HadoopLinux/impala/install/apache-impala-3.3.0
+notebook@notebook:~/HadoopLinux/impala/install/apache-impala-3.3.0$ bin/bootstrap_build.sh
+[It will buld the source code]
+
+https://stackoverflow.com/questions/52502493/how-to-install-impala-on-ubuntu/52659620
+
+wget 'https://archive.cloudera.com/cdh5/ubuntu/xenial/amd64/cdh/cloudera.list'
+mv cloudera.list /etc/apt/sources.list.d/cloudera.list
+wget 'https://archive.cloudera.com/cdh5/ubuntu/xenial/amd64/cdh/archive.key'
+apt-key add archive.key`
+
+https://docs.cloudera.com/documentation/enterprise/5-14-x/topics/cdh_ig_cdh5_install.html#topic_4_4_1__p_32
+
+
+
+
+$ sudo apt-get install impala             # Binaries for daemons
+$ sudo apt-get install impala-server      # Service start/stop script
+$ sudo apt-get install impala-state-store # Service start/stop script
+$ sudo apt-get install impala-catalog     # Service start/stop script
+
+ERROR:
+E: Unable to locate package impala
+https://askubuntu.com/questions/378558/unable-to-locate-package-while-trying-to-install-packages-with-apt
+
+
+
+-------------------------------------------------------------------------------------------------------------------
+
+Installing via command line build
+> bin/bootstrap_build.sh
+
+ERROR:
+[ 73%] Built target Exec
+CMakeFiles/Makefile2:7087: recipe for target 'be/src/service/CMakeFiles/impalad.dir/rule' failed
+make[1]: *** [be/src/service/CMakeFiles/impalad.dir/rule] Error 2
+Makefile:2222: recipe for target 'impalad' failed
+make: *** [impalad] Error 2
+
+
+Findding ERRRR:
+notebook@notebook:~/HadoopLinux/impala/install/apache-impala-3.3.0$ vim Makefile
+2220 # Build rule for target.
+2221 impalad: cmake_check_build_system
+2222         $(MAKE) -f CMakeFiles/Makefile2 impalad
+2223 .PHONY : impalad
+
+
+notebook@notebook:~/HadoopLinux/impala/install/apache-impala-3.3.0/CMakeFiles$ vim Makefile2
+7093 impalad: be/src/service/CMakeFiles/impalad.dir/rule
+
+

@@ -1,0 +1,17 @@
+SHOW ROLES;
+-- Show all the roles of the system.
+
+
+SHOW CURRENT ROLES;
+-- To list all the roles in effect for the current user session:
+
+
+SHOW ROLE GRANT GROUP <groupName>;
+
+
+SHOW GRANT ROLE <roleName>;
+
+
+SHOW GRANT ROLE <roleName> on OBJECT <objectName>;
+-- To list all the grants for a role on the given <objectName>
+

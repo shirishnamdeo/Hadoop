@@ -1,0 +1,9 @@
+CREATE TABLE IF NOT EXISTS gcuat.impala_table (
+column_name1 STRING,
+column_name2 DOUBLE
+);
+
+
+INSERT INTO TABLE impala_table VALUES ("name1", 1);
+INSERT INTO TABLE impala_table VALUES ("name2", 2);
+INSERT INTO TABLE impala_table VALUES ("name3", 3);

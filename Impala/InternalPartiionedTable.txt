@@ -1,0 +1,18 @@
+CREATE TABLE internal_partitioned3(
+column_name1 STRING,
+column_name2 STRING,
+column_name3 STRING
+)
+PARTITIONED BY(
+partition1 STRING
+);
+
+
+INSERT INTO TABLE internal_partitioned3
+(column_name1, column_name2, column_name3, partition1)
+VALUES 
+('column1_value1', 'column2_value1', 'column3_value1', 'partition1_value1');
+
+
+
+TBLPROPERTIES ("skip.header.line.count"="1");

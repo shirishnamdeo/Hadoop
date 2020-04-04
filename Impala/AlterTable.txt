@@ -1,0 +1,40 @@
+show partitions dhtax_tm1connect_ibperf;
+
+> ALTER TABLE dhtax_tm1connect_ibperf DROP IF EXISTS PARTITION (bus_date='2018-09-21');
+
+
+ msck repair table dhtax_tm1connect_ibperf;
+
+
+
+------------------------------------------------------------------------------------------------------------------------------------------------------
+
+Alter the type of a table after creating and insertion of data
+
+CREATE TABLE typeof_example (a INT, b TINYINT, c SMALLINT, d BIGINT);
+
+/* Empty result set if there is no data in the table. */
+SELECT typeof(a) FROM typeof_example;
+
+/* OK, now we have some data but the type of column A is being changed. */
+INSERT INTO typeof_example VALUES (1, 2, 3, 4);
+ALTER TABLE typeof_example CHANGE a a BIGINT;
+
+/* We can always find out the current type of that column without doing a full DESCRIBE. */
+SELECT typeof(a) FROM typeof_example LIMIT 1;
+
+
+
+
+Programitically create a table string
+
+SELECT CONCAT('create table derived_table (a ', typeof(a), ', b ', typeof(b), ', c ',
+    typeof(c), ', d ', typeof(d), ') stored AS parquet;')
+  AS 'create table statement'
+FROM typeof_example LIMIT 1;
+-->  create table derived_table (a BIGINT, b TINYINT, c SMALLINT, d BIGINT) stored AS parquet;
+
+
+
+------------------------------------------------------------------------------------------------------------------------------------------------------
+

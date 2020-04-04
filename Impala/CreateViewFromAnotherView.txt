@@ -1,0 +1,2 @@
+// Creating a replica view
+CREATE VIEW exppcu7.dhvrc_pdb_view AS SELECT * FROM vrcuat.dhvrc_pdb_view;

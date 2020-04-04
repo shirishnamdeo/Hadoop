@@ -1,0 +1,73 @@
+-- https://kudu.apache.org/docs/kudu_impala_integration.html
+
+Kudu has tight integration with Apache Impala, allowing you to use Impala to insert, query, update, and delete data 
+from Kudu tablets using Impala’s SQL syntax, as an alternative to using the Kudu APIs to build a custom Kudu application
+
+In addition, you can use JDBC or ODBC to connect existing or new applications written in any language, framework, or 
+business intelligence tool to your Kudu data, using Impala as the broker.
+
+No configuration changes are required within Kudu to enable access from Impala.
+Although not strictly necessary, it is recommended to configure Impala with the locations of the Kudu Master servers:
+--> Set the --kudu_master_hosts=<master1>[:port],<master2>[:port],<master3>[:port] flag in the Impala service 
+configuration.
+
+If this flag is not set within the Impala service, it will be necessary to manually provide this configuration each 
+time you create a table by specifying the kudu.master_addresses property inside a TBLPROPERTIES clause.
+
+Q. Why such flag is not set in our IMPALA_SHELL variable on cluster??
+
+------------------------------------------------------------------------------------------------------------------------
+-- https://kudu.apache.org/docs/kudu_impala_integration.html#_using_the_hive_metastore_integration
+
+Using the Hive Metastore Integration
+
+Internal:
+An internal table is managed by Impala, and when you drop it from Impala, the data and the table truly are dropped. 
+When you create a new table using Impala, it is generally a internal table.
+
+External Table:
+An external table (created by CREATE EXTERNAL TABLE) is not managed by Impala, and dropping such a table does not drop 
+the table from its source  location (here, Kudu). Instead, it only removes the mapping between Impala and Kudu.
+
+
+Starting from Kudu 1.10.0 and Impala 3.3.0, the Impala integration can take advantage of the automatic Kudu-HMS catalog 
+synchronization enabled by Kudu’s Hive Metastore integration. 
+Since there may be no one-to-one mapping between Kudu tables and external tables, only internal tables are automatically
+synchronized.
+
+Q. What does this one-to-one mapping mean?
+
+--> When Kudu’s integration with the Hive Metastore is not enabled, Impala will create metadata entries in the HMS on 
+    behalf of Kudu.
+
+--> When Kudu’s integration with the Hive Metastore is enabled, Impala should be configured to use the same Hive 
+    Metastore as Kudu.
+    In this case, Kudu will update the HMS.
+
+
+
+When the Kudu-HMS integration is enabled, internal table entries will be created automatically in the HMS when tables 
+are created in Kudu without Impala.
+To access these tables through Impala, run invalidate metadata so Impala picks up the latest metadata.
+
+------------------------------------------------------------------------------------------------------------------------
+-- https://kudu.apache.org/docs/kudu_impala_integration.html#_querying_an_existing_kudu_table_in_impala
+
+Querying an Existing Kudu Table In Impala
+
+Without the HMS integration enabled, tables created through the Kudu API or other integrations such as Apache Spark are 
+not automatically visible in Impala. 
+To query them, you must first create an external table within Impala to map the Kudu table into an Impala database.
+
+
+-- Creating an Impala Table 'my_mapping_table' to map with Kudu table 'my_kudu_table' (for an already created table in 
+Kudu)
+
+CREATE EXTERNAL TABLE my_mapping_table
+STORED AS KUDU
+TBLPROPERTIES (
+  'kudu.table_name' = 'my_kudu_table'
+);
+
+
+

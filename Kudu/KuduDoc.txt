@@ -1,0 +1,245 @@
+-- https://kudu.apache.org/faq.html
+
+
+Kudu Doc --> https://kudu.apache.org/docs/index.html
+Kudu Schema Design --> https://kudu.apache.org/docs/schema_design.html
+Impala with Kudu --> https://kudu.apache.org/docs/schema_design.html
+
+
+rows are sorted by primary key within tablets.
+
+
+Column Encoding --> https://kudu.apache.org/docs/schema_design.html#encoding
+Column Compression --> https://kudu.apache.org/docs/schema_design.html#compression
+
+
+------------------------------------------------------------------------------------------------------------------------
+-- https://www.youtube.com/watch?v=FIKfI6jxF0s
+
+Kudu -> Storage (I believe it also has its own engine for processing, or Impala engine is used?)
+Impala -> I believe it can use Kudu for storage .
+
+
+Kudu's data model is more traditionally relational, while HBase is schemaless.
+Kudu's on-disk representation is truly columnar and follows an entirely different storage design than HBase/BigTable.
+
+Making these fundamental changes in HBase would require a massive redesign, as opposed to a series of simple changes. 
+HBase is the right design for many classes of applications and use cases and will continue to be the best storage engine
+for those workloads.
+
+
+
+Storage data in Hadoop (for relational data operations):
+	HDFS
+	HBase
+	Kudu
+
+HDFS:
+	HDFS is a file system (Hadoop Distributed file system).
+	
+	Very flexible, to store any type of data in any format, no contrains on type, format of data (text, audio, video), 
+	essentially it stores bytes thus doesn't store about type of data. 
+	
+	HDFS doesn't interpret the bytes as it lands in. You just copy the file in, HDFS just takes in these bytes and land 
+	them on disk. Thus we essentially gets the raw throughput of the disk devices then we put/get data in/out of HDFS.
+	HDFS is not doing much, just copying data here to there, so very efficient and high THROUGHPUT.
+
+	Highly Scalable
+
+	Downside of using HDFS is that because it doesn't understand the data you are putting into it, it doesn't give you a
+	lot of interesting semantics, and the only semantics available are bulk insert a big file, read chunks of that file
+	back out and may be stream them into some system doing SQL.
+	We can't go and address an individual row or record, you can't update an individual row and that's because it 
+	doesn't know what a row is, doesn't know how to find that row, no build in functionality like indexing etc.
+
+
+HBase:
+	HBase is born out of introducing mutability and more structure, so developers added the idea of Rowkey and rows and 
+	columns.
+	So we got richer semantics of update, insert, fetch.
+	Still very flexible as it doesn't require to specify any schema upfront, we can just put any data in, it treat all 
+	the data as byte arrays. 
+	We can change the data on fly, no need to describe it ahead of time so it retains some of the flexibity of HDFS and 
+	it adds this real time data serving component where we can access any one of these rows or a small range of rowa in
+	milliseconds.
+
+	HBase is still very scalable but not quite as scalable as HDFS and not as efficient as HDFS.
+
+	HBase is not very good at running machine learning using Spark, or pointing a BI tool.
+
+	So it is good for Online serving, online data access, data mutation kind of workload, NOT FOR RALATIONAL ANALYTICS.
+
+
+Kudu:
+	Kudu is trying to be in middle of these two things.
+	Kudu is probally good at both, not quite as good as HDFS in data storage efficiency, not quite as good as HBase at 
+	all the randon access, but good for relational applications. 
+
+	Fast Analytics on Fast Data.
+	Fast Analytics (Running a BI app, running a Spark job to build a Machine Learning model), anything that is looking 
+	at data in aggregate.
+	Fast Data means data is not an static dataset, it can actually may be streaming updates as they arrive from some 
+	system, may be modifying it as new data becomes available. 
+	
+
+
+
+Impala (How does it fits with Kudu for Relational data applications)
+	Implementation of an MPP SQL engine for the Hadoop environment.
+	Designed for performance, brand new engine written in C++.
+
+	Maintains Hadoop's flexiblity by utilizing standard Hadoop components.
+		Data can be stored in any of the Hadoop storage managers, means data could be on HDFS, HBase, or in Kudu.
+		Metadata: Hive Metastore
+		Read widely used file formats: Parquet, text, Avro.
+
+	Runs on same nodes that runs Hadoop processes.
+
+	External tools can use JBBC and ODBS connections to runs SQL queries.
+
+	SQL standard is SQL 92 + some later extensions.
+
+	Security: Support all types of security that we expect from relational databse.
+	Grant/Revoke on columns?? and tables, authenticate using LDAP.
+
+
+	Impala is highest performance on Hadoop (even faster than Spark)
+	Impala > Greenplum > Spark SQL > Hive with LLAP > Presto  (for single user)
+
+	For multiple users, it is even more faster, issuing a highly concurrent workloads.
+
+
+------------------------------------------------------------------------------------------------------------------------
+
+
+Apache Kudu usage and Design:
+
+Kudu (like Impala) is written from scratch in C++, very concurrent, very low lock contention (optimized for new CPUs and 
+Hardware), to scale to many cores and large amounnts of RAM.
+
+Fast:
+	Millions of read/write operations per second across cluster.
+	Multiple GB/second read throughput per node
+
+
+Kudu is not a file-system. No concept of file or block or blob (unlike HDFS)
+Tabular:
+	Represents data in structured tables like a RELATIONAL DATABASE
+	Strict schema, finite column count (Max for 300 columns), no BLOBs. Everyting is tables in Kudu.
+	Individual record-level access to 100+ billion rows, Update/Insert/Delete individual rows just like any database.
+
+
+A Kudu table has a SQL-like Schema and a finite number of columns (unline Hbase/Cassandra)
+It has columns with names and data-types, Nullable/Non-Nullable.
+Simple datatypes supported, but nested data-types not supported right now.
+
+Some subset of columns make up a possibly-composite primary key (No special row key concept) 
+
+Addtion columns for existing table is supported using ALTER TABLE ADD COLUMN (constant time fast operation)
+
+Access using API: Java, Pyhton and C++ API (very low latency, directly accessing the server, stored data)
+Great for online applications for lowest possible latencies.
+
+For complicated worloads like SQL queries and ML models, we are not going to use the API but instead we want to use SQL
+
+SQL is only offered through integrations (Impala/Spark)
+Kudu natively only has API, no SQL engine.
+SQL can be issues through Impala, and Impala would be responsible to translating that into underlying API calls, to 
+access Kudu, in the most efficient manner it can.
+
+
+------------------------------------------------------------------------------------------------------------------------
+
+Physical Schama desing in Kudu:
+
+
+Kudu (with Time Series Data):
+Real time data ingestion is very important + Fast scans
+
+
+Support for many column encodings and compression schemes
+	Encodings: Delta, Dictionary, Bitshuffle
+	Compression: LZ4, gzip, bzip2  (recused data volume -> reduces I/O time)
+
+Supports flexible set of partitioning schemes (multi dimensional partitions, like hash and time simultaneously)
+Hash partitioning is very useful (than range partitioning). I believe it can automatic bucket the data using modulo over
+some function of data, or even specified explictly.
+
+Partitioning the data helps in queries to be parallelize (by worker nodes), insert directly into that partition.
+
+
+------------------------------------------------------------------------------------------------------------------------
+
+Kudu and Impala together:
+
+Storage:
+It is how the data is laid out on the disk.
+In traditional database we have things like Block Caches, Page management, and B-trees, Indexes etc.
+
+Recod layer:
+Give information about how to interpret the data on disk as rows and columns, instead of just bytes.
+
+
+Query Execution:
+Input is a select statement, then parse it, develop a query plan, and execute the plan. 
+
+
+Catalog:
+A metadata. Existing tables, where data of a table exists/mapped, so to which data to read.
+
+
+In systems like Postgress, all these components are tightly couples together, we can't just use single componet alone.
+In Hadoop, all these compoenets are seperated a little bit. So we have all these same components, but delivered as 
+separate open source packages.
+
+Query Execution -> Impala (Parsing, planning)
+
+Kudu doesn't know anything about SQL, no sql parser. Its a combination of Storage and Record layer.
+It will store data and tell impala how thats maps into records.
+Another option is to use HDFS(as storage) and Parquet(as Record layer)
+HDFS is a storage but doesn't understand rows and columsn.
+Parquet is a format but doesn't know how to store itself, doesn't know about disks and drives.
+
+
+Catalog -> Hive Metastore (which data exists, who has access to it etc)
+
+
+
+
+
+Advantage of Decoupled Architecture:
+Mix and match access mechanism against single storage manager.
+	Impala for SQL
+	Spark for Machine Learning
+	No-SQL API's for low latency random access (not forced through SQL layer to insert/update/delete)
+
+Mix and match storage managers:
+	In same impala query we can join data stored in HDFS and on Kudu, we don't need to know that there is different 
+	storage underneath.
+	Unified through SQL and common catalog using Hive
+
+Impala is responsible of doing the translation of SQL into something Kudu can understand.
+
+
+
+SQL syntax:
+Impala takes advantage of the features of the scan API:
+	Tablets are selected based on supplied key predicates
+	Kudu-accessible predicated are pushed down
+	remaining predicated are evaluated in impala (eg a like predicate in SQL)
+
+Impala and Kudu share common in-memory data representations - avoids conversion overhead
+
+------------------------------------------------------------------------------------------------------------------------
+
+
+Application Architecture:
+
+
+
+Column Level Security (not yet in Kudu)
+
+Buld upload/update are slower then HDFS.
+Buld upload/update are faster for ordered data than unordered data in Kudu.
+
+

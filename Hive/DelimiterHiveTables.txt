@@ -1,0 +1,19 @@
+https://stackoverflow.com/questions/18931427/create-hive-table-with-multi-character-delimiter
+
+CREATE EXTERNAL TABlE tableex(id INT, name STRING) 
+ROW FORMAT 'org.apache.hadoop.hive.contrib.serde2.RegexSerDe'
+WITH SERDEPROPERTIES (
+  "input.regex" = "^(\\d+)~\\*(.*)$"
+)
+STORED AS TEXTFILE 
+LOCATION '/user/myusername';
+
+
+
+CREATE EXTERNAL TABlE tableex(id INT, name STRING) 
+ROW FORMAT SERDE 'org.apache.hadoop.hive.contrib.serde2.MultiDelimitSerDe' 
+WITH SERDEPROPERTIES ("field.delim"="~*")
+STORED AS TEXTFILE
+LOCATION '/user/myusername';
+
+
