@@ -1,0 +1,11 @@
+-- https://kudu.apache.org/docs/kudu_impala_integration.html#_dropping_a_kudu_table_using_impala
+
+Dropping a table fro IMPALA
+
+If the table was created as an internal table in Impala, using CREATE TABLE, the standard DROP TABLE syntax drops the 
+underlying Kudu table and all its data. 
+If the table was created as an external table, using CREATE EXTERNAL TABLE, the mapping between Impala and Kudu is 
+dropped, but the Kudu table is left intact, with all its data.
+
+
+DROP TABLE my_first_table;

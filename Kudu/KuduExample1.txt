@@ -1,5 +1,6 @@
 use ${var:HIVE_SCHEMA};
 CREATE TABLE ${var:HIVE_SCHEMA}.<table_name>
+CREATE TABLE kudu_test_table
 (
     col1     string encoding dict_encoding compression LZ4,
     col2     timestamp encoding bit_shuffle compression LZ4,
@@ -11,3 +12,5 @@ PARTITION BY RANGE (bus_date)
   PARTITION VALUE = ('1400-01-01')
 )
 STORED AS KUDU;
+
+ERROR: bus_date is not the part of key column.
