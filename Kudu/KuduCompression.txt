@@ -1,0 +1,43 @@
+-- https://docs.cloudera.com/documentation/enterprise/5-11-x/topics/impala_kudu.html#kudu_compression_attribute
+
+Encoding == LOW-OVERHEAD FORM OF COMPRESSION
+
+You can specify a compression algorithm to use for each column in a Kudu table. 
+This attribute imposes more CPU overhead when retrieving the values than the ENCODING attribute does. 
+Therefore, use it primarily for columns with long strings that do not benefit much from the less-expensive ENCODING 
+attribute.
+
+The choices for COMPRESSION are LZ4, SNAPPY, and ZLIB.
+
+Columns that use the BITSHUFFLE encoding are already compressed using LZ4, and so typically do not need any additional 
+COMPRESSION attribute.
+
+
+CREATE TABLE blog_posts
+(
+    user_id               STRING ENCODING DICT_ENCODING,
+    post_id               BIGINT ENCODING BIT_SHUFFLE,
+    subject               STRING ENCODING PLAIN_ENCODING,
+    body                  STRING COMPRESSION LZ4,
+    spanish_translation   STRING COMPRESSION SNAPPY,
+    esperanto_translation STRING COMPRESSION ZLIB,
+    PRIMARY KEY (user_id, post_id)
+) PARTITION BY HASH(user_id, post_id) PARTITIONS 2 STORED AS KUDU;
+
+
+
+The following example shows design considerations for several STRING columns with different distribution characteristics
+leading to choices for both the ENCODING and COMPRESSION attributes. 
+
+The country values come from a specific set of strings, so this column is a good candidate for dictionary encoding. 
+The post_id column contains an ascending sequence of integers, where several leading bits are likely to be all zeroes, 
+therefore this column is a good candidate for bitshuffle encoding. 
+The body column and the corresponding columns for translated versions tend to be long unique strings that are not 
+practical to use with any of the encoding schemes, therefore they employ the COMPRESSION attribute instead. 
+
+The ideal compression codec in each case would require some experimentation to determine how much space savings it 
+provided and how much CPU overhead it added, based on real-world data.
+
+
+
+

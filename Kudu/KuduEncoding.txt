@@ -1,0 +1,40 @@
+-- https://docs.cloudera.com/documentation/enterprise/5-11-x/topics/impala_kudu.html#kudu_encoding_attribute
+
+Encoding == LOW-OVERHEAD FORM OF COMPRESSION
+
+
+Each column in a Kudu table can optionally use an encoding, A LOW-OVERHEAD FORM OF COMPRESSION that reduces the size on 
+disk, then requires additional CPU cycles to reconstruct the original values during queries. 
+
+Typically, highly compressible data benefits from the reduced I/O to read the data back from disk. 
+By default, each column uses the "plain" encoding where the data is stored unchanged.
+
+
+
+The encoding keywords that Impala recognizes are:
+
+AUTO_ENCODING: 
+	Use the default encoding based on the column type; currently always the same as PLAIN_ENCODING, but subject to 
+	change in the future.
+
+
+PLAIN_ENCODING: 
+	Leave the value in its original binary format.
+
+
+RLE: 
+	Compress repeated values (when sorted in primary key order) by including a count.
+
+
+DICT_ENCODING: 
+	When the number of different string values is low, replace the original string with a numeric ID.
+
+
+BIT_SHUFFLE: 
+	Rearrange the bits of the values to efficiently compress sequences of values that are identical or vary only 
+	slightly based on primary key order. The resulting encoded data is also compressed with LZ4.
+
+
+PREFIX_ENCODING: 
+	Compress common prefixes in string values; mainly for use internally within Kudu.
+

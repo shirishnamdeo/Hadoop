@@ -1,5 +1,6 @@
 
 
-UPDATE my_first_table SET name="bob" where id = 3;
+UPDATE <database-name>.dhtax_category_kudu SET taxpercantage='1' WHERE entity = 'S11' AMD taxcategory = 'EXEMPT';
+UPDATE <database-name>.dhtax_category_kudu SET taxpercantage='1' WHERE entity = 'S11';
 
-UPDATE my_first_table SET name="bob" where age > 10;
+UPDATE <database-name>.dhtax_category_kudu SET taxpercantage='1' WHERE taxpercantage < '0.10';

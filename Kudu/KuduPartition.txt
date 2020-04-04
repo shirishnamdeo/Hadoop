@@ -1,0 +1,141 @@
+-- https://docs.cloudera.com/documentation/enterprise/5-11-x/topics/impala_kudu.html#kudu_partitioning
+-- https://kudu.apache.org/kudu.pdf
+
+Kudu tables use special mechanisms to distribute data among the underlying tablet servers. 
+
+Although we refer to such tables as partitioned tables, they are distinguished from traditional Impala partitioned 
+tables by use of different clauses on the CREATE TABLE statement. 
+
+Kudu tables use PARTITION BY, HASH, RANGE, and range specification clauses rather than the PARTITIONED BY clause for 
+HDFS-backed tables, which specifies only a column name and creates a new partition for each different value.
+
+
+------------------------------------------------------------------------------------------------------------------------
+
+Hash Partitioning:
+
+Hash partitioning is the simplest type of partitioning for Kudu tables. 
+For hash-partitioned Kudu tables, inserted rows are divided up between a fixed number of "buckets" by applying a hash 
+function to the values of the columns specified in the HASH clause. 
+
+Hashing ensures rows with similar values ARE EVENLY DISTRIBUTED, instead of clumping together all in the same bucket.
+Spreading new rows across the buckets this way lets insertion operations work in parallel across multiple tablet servers
+
+Separating the hashed values can impose additional overhead on queries, where queries with range-based predicates might 
+have to read multiple tablets to retrieve all the relevant values.
+
+
+
+
+-- 1M rows with 50 hash partitions = approximately 20,000 rows per partition.
+-- The values in each partition are not sequential, but rather based on a hash function.
+-- Rows 1, 99999, and 123456 might be in the same partition.
+CREATE TABLE million_rows (id string primary key, s string)
+  PARTITION BY HASH(id) PARTITIONS 50
+  STORED AS KUDU;
+
+-- I believe modulo is used to identify the bucket.
+
+-- Because the ID values are unique, we expect the rows to be roughly
+-- evenly distributed between the buckets in the destination table.
+INSERT INTO million_rows SELECT * FROM billion_rows ORDER BY id LIMIT 1e6;
+
+
+Note: 
+The largest number of buckets that you can create with a PARTITIONS clause varies depending on the number of tablet 
+servers in the cluster, while the smallest is 2. 
+For large tables, prefer to use roughly 10 partitions per server in the cluster.
+
+
+------------------------------------------------------------------------------------------------------------------------
+
+Range Partitioning:
+
+Range partitioning lets you specify partitioning precisely, based on single values or ranges of values within one or 
+more columns.
+You add one or more RANGE clauses to the CREATE TABLE statement, following the PARTITION BY clause.
+
+Range-partitioned Kudu tables use one or more range clauses, which include a combination of constant expressions, VALUE 
+or VALUES keywords, and comparison operators.
+
+
+
+
+
+-- 50 buckets, all for IDs beginning with a lowercase letter.
+-- Having only a single range enforces the allowed range of values
+-- but does not add any extra parallelism.
+create table million_rows_one_range (id string primary key, s string)
+  partition by hash(id) partitions 50,
+  range (partition 'a' <= values < '{')
+  stored as kudu;
+
+
+-- 50 buckets for IDs beginning with a lowercase letter
+-- plus 50 buckets for IDs beginning with an uppercase letter.
+-- Total number of buckets = number in the PARTITIONS clause x number of ranges.
+-- We are still enforcing constraints on the primary key values
+-- allowed in the table, and the 2 ranges provide better parallelism
+-- as rows are inserted or the table is scanned.
+create table million_rows_two_ranges (id string primary key, s string)
+  partition by hash(id) partitions 50,
+  range (partition 'a' <= values < '{', partition 'A' <= values < '[')
+  stored as kudu;
+
+
+-- Same as previous table, with an extra range covering the single key value '00000'.
+create table million_rows_three_ranges (id string primary key, s string)
+  partition by hash(id) partitions 50,
+  range (partition 'a' <= values < '{', partition 'A' <= values < '[', partition value = '00000')
+  stored as kudu;
+
+-- The range partitioning can be displayed with a SHOW command in impala-shell.
+show range partitions million_rows_three_ranges;
++---------------------+
+| RANGE (id)          |
++---------------------+
+| VALUE = "00000"     |
+| "A" <= VALUES < "[" |
+| "a" <= VALUES < "{" |
++---------------------+
+
+
+
+IP -> For range-partitioned Kudu tables, an appropriate range must exist before a data value can be created in the table
+      Any INSERT, UPDATE, or UPSERT statements fail if they try to create column values that fall outside the specified 
+      ranges.
+      The error checking for ranges is performed on the Kudu side.
+
+
+
+Ranges can be non-contiguous:
+    partition by range (year) (partition 1885 <= values <= 1889, partition 1893 <= values <= 1897)
+
+    partition by range (letter_grade) (partition value = 'A', partition value = 'B',
+                                       partition value = 'C', partition value = 'D', partition value = 'F')
+
+
+The ALTER TABLE statement with the ADD PARTITION or DROP PARTITION clauses can be used to add or remove ranges from an 
+existing Kudu table.
+    ALTER TABLE foo ADD PARTITION 30 <= VALUES < 50;
+    ALTER TABLE foo DROP PARTITION 1 <= VALUES < 5;
+
+
+When a range is added, the new range must not overlap with any of the previous ranges; that is, it can only fill in gaps
+within the previous ranges.
+    ALTER TABLE test_scores ADD RANGE PARTITION value = 'E';
+    ALTER TABLE year_ranges ADD RANGE PARTITION 1890 <= values < 1893;
+
+
+When a range is removed, all the associated rows in the table are deleted. (This is true whether the table is internal 
+or external.)
+    ALTER TABLE test_scores DROP RANGE PARTITION value = 'E';
+    ALTER TABLE year_ranges DROP RANGE PARTITION 1890 <= values < 1893;
+
+
+
+Kudu tables can also use a combination of hash and range partitioning.
+    PARTITION BY HASH (school) PARTITIONS 10,
+    RANGE (letter_grade) (PARTITION value = 'A', PARTITION value = 'B',
+                          PARTITION value = 'C', PARTITION value = 'D', PARTITION value = 'F')
+

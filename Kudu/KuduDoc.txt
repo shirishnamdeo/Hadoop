@@ -1,3 +1,7 @@
+[Kudu: Storage for Fast Analytics on Fast Data]
+-- https://kudu.apache.org/kudu.pdf
+
+
 -- https://kudu.apache.org/faq.html
 
 
