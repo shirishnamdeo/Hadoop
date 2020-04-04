@@ -1,0 +1,5 @@
+
+
+UPDATE my_first_table SET name="bob" where id = 3;
+
+UPDATE my_first_table SET name="bob" where age > 10;

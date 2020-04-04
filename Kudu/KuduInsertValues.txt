@@ -1,0 +1,11 @@
+
+
+INSERT INTO my_first_table VALUES (99, "sarah");
+
+INSERT INTO my_first_table VALUES (1, "john"), (2, "jane"), (3, "jim");
+
+
+INSERT INTO my_kudu_table
+  SELECT * FROM legacy_data_import_table;
+
+  

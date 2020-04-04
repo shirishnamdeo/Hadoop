@@ -1,0 +1,7 @@
+
+
+DELETE FROM my_first_table WHERE id < 3;
+
+DELETE c FROM my_second_table c, stock_symbols s WHERE c.name = s.symbol;
+
+The DELETE statement only works in Impala when the target table is in Kudu.

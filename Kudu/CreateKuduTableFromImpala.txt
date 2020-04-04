@@ -81,11 +81,12 @@ CREATE TABLE AS SELECT:
 
 
 CREATE TABLE <database-name>.dhtax_category_kudu
-PRIMARY KEY (entity, category)
-PARTITION BY HASH(name) PARTITIONS 8
+PRIMARY KEY (entity, taxcategory)
+PARTITION BY HASH(entity) PARTITIONS 8
 STORED AS KUDU
 AS SELECT * FROM <database-name>.dhtax_category;
 
+By default: AUTO_ENCODING, and DEFAULT_COMPRESSION
 
 
 You can create a table by querying any other table or tables in Impala, using a CREATE TABLE …​ AS SELECT statement. 
