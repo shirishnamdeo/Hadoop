@@ -18,6 +18,8 @@ STORED AS KUDU
 TBLPROPERTIES (
   'kudu.table_name' = 'dhtax_tm1connect_ibperf_kudu'
 );
+ERROR: AnalysisException: Table already exists: <dtabase-name>.<dhtax_tm1connect_ibperf>
+-- As the table already exists in impala, we cant recreate it again in impala.
 
 
 
