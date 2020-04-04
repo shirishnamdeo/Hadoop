@@ -6,11 +6,15 @@ impala::database_name.table_name
 
 Querying an Existing Kudu Table In Impala
 
-CREATE EXTERNAL TABLE my_mapping_table
+CREATE EXTERNAL TABLE <database-name>.my_mapping_table
 STORED AS KUDU
 TBLPROPERTIES (
   'kudu.table_name' = 'my_kudu_table'
 );
+
+-> When used on cluster, EXTERNAL keywork is not allowed (giving an authorization error)
+   Might be external table are not allowed to be created on cluster.
+
 
 
 CREATE EXTERNAL TABLE dhtax_tm1connect_ibperf
@@ -23,6 +27,31 @@ ERROR: AnalysisException: Table already exists: <dtabase-name>.<dhtax_tm1connect
 
 
 
+use ${var:HIVE_SCHEMA};
+CREATE TABLE ${var:HIVE_SCHEMA}.<table_name>
+CREATE TABLE kudu_test_table
+(
+    col1     STRING    ENCODING DICT_ENCODING COMPRESSION LZ4,
+    col2     TIMESTAMP ENCODING BIT_SHUFFLE   COMPRESSION LZ4,
+    col3     DOUBLE    ENCODING BIT_SHUFFLE   COMPRESSION NO_COMPRESSION,
+
+PRIMARY KEY (col1, col2)
+)
+PARTITION BY RANGE (col1)
+(
+  PARTITION VALUE = ('1400-01-01')
+)
+STORED AS KUDU;
+
+
+IMP: PARTITION BY must contains the column name which is the part of PRIMARY KEY touple.
+PARTITION BY RANGE (bus_date)
+ERROR: bus_date is not the part of key column. [even using col3 would give an ERROR]
+
+
+
+
+
 When the Kudu-HMS integration is enabled, internal table entries will be created automatically in the HMS when tables 
 are created in Kudu without Impala
 
@@ -30,6 +59,7 @@ are created in Kudu without Impala
 
 Creating a New Kudu Table From Impala:
 
+PRIMARY KEY is mandatory.
 
 CREATE TABLE my_first_table
 (
@@ -50,11 +80,13 @@ STORED AS KUDU;
 CREATE TABLE AS SELECT:
 
 
-CREATE TABLE new_table
-PRIMARY KEY (ts, name)
+CREATE TABLE <database-name>.dhtax_category_kudu
+PRIMARY KEY (entity, category)
 PARTITION BY HASH(name) PARTITIONS 8
 STORED AS KUDU
-AS SELECT ts, name, value FROM old_table;
+AS SELECT * FROM <database-name>.dhtax_category;
+
+
 
 You can create a table by querying any other table or tables in Impala, using a CREATE TABLE …​ AS SELECT statement. 
 The following example imports all rows from an existing table old_table into a Kudu table new_table. 

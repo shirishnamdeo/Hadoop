@@ -12,5 +12,7 @@ PARTITION BY RANGE (bus_date)
   PARTITION VALUE = ('1400-01-01')
 )
 STORED AS KUDU;
+ERROR: bus_date is not the part of key column. [even using col3 would give an ERROR]
 
-ERROR: bus_date is not the part of key column.
+
+IMP: PARTITION BY must contains the column name which is the part of PRIMARY KEY touple.
