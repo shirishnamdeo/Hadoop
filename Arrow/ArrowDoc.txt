@@ -1,0 +1,24 @@
+https://www.youtube.com/watch?v=y7zGnKzaKIw
+https://github.com/apache/arrow
+
+
+Standardizing in-memory data
+    Zero-overhead memory sharing between libraries in-memory and processes via shared memory.
+    Reuse algorithm
+    Reuse I/O storage code
+
+
+Although the Tables(SQL/Hive)/DataFrames(Python/R/Spark) have the same name(Table and DataFrame), but internally they 
+are represented in different data-structures. The is no common standard which is followed between them.
+
+
+Pandas are built on Numpy NdArrays
+
+
+
+Apache Arrow is an open standard language-independent standard for in-memory columnar data (tables/dataframes)
+
+
+Non Portable DataFrames(R/Python/JVM) -> We can't use the data between different languages
+Portable DataFrames (Arrow)
+

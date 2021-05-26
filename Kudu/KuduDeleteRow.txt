@@ -51,4 +51,5 @@ DELETE t2 FROM non_kudu_table t1 JOIN kudu_table t2 ON t1.x = t2.x;
 
 ------------------------------------------------------------------------------------------------------------------------
 
-
+DELETE FROM <table-name> WHERE feed_id='' AND cob_date='' AND as_of_date='' ;
+--This works even if the table is not partitioned on above attribites 
