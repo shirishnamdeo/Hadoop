@@ -23,10 +23,10 @@
   </property>
   <property>
       <name>dfs.namenode.name.dir</name>
-      <value>file:///home/notebook/HadoopLinux/hdfs/data/namenode</value>
+      <value>file:///home/notebook/Hadoop/hdfs/data/hadoop/namenode</value>
   </property>   
   <property>
       <name>dfs.datanode.data.dir</name>
-      <value>file:///home/notebook/HadoopLinux/hdfs/data/datanode</value>
+      <value>file:///home/notebook/Hadoop/hdfs/data/hadoop/datanode</value>
   </property> 
 </configuration>

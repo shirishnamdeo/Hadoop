@@ -1,0 +1,14 @@
+Starting namenodes on [localhost]
+pdsh@notebook: localhost: rcmd: socket: Permission denied
+Starting datanodes
+pdsh@notebook: localhost: rcmd: socket: Permission denied
+Starting secondary namenodes [notebook]
+pdsh@notebook: notebook: rcmd: socket: Permission denied
+
+
+
+---------------------------------------------------------------------------------------------------
+SOLVED:
+https://stackoverflow.com/questions/42756555/permission-denied-error-while-running-start-dfs-sh
+
+export PDSH_RCMD_TYPE=ssh
