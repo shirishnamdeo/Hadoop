@@ -105,6 +105,8 @@ Didnt worked for me!!
 https://superuser.com/questions/1492421/i-cant-run-hive-in-command-lie/1501841#1501841
 
 Solution: I have installed hadoop v- 3.1.2 instead of 3.2.1 (now working). Hive version is Hive 3.1.2
-
+OR 
+rm $HIVE_HOME/lib/guava-14.0.1.jar
+cp $HADOOP_HOME/share/hadoop/hdfs/lib/guava-27.0-jre.jar $HIVE_HOME/lib/
 
 

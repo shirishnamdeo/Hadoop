@@ -1,0 +1,3 @@
+HADOOP: hadoop-3.2.1.tar.gz
+SPARK : spark-3.1.1-bin-hadoop2.7.tgz
+HIVE  : apache-hive-2.3.8-bin.tar.gz

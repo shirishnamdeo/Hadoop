@@ -18,11 +18,10 @@ chmod 0600 ~/.ssh/authorized_keys
 # Installing HDFS
 mkdir /home/notebook/Hadoop
 tar -zxvf /media/sf_SharedFolder/hadoop-3.2.1.tar.gz -C /home/notebook/Hadoop
-mv /home/notebook/Hadoop/hadoop-3.2.1  /home/notebook/Hadoop/hadoop321
+mv /home/notebook/Hadoop/hadoop-3.2.1  /home/notebook/Hadoop/hadoop
 
 
-vim .bashrc
-
+# vim .bashrc
 export HADOOP_HOME=/home/notebook/Hadoop/hadoop
 export HADOOP_BIN=$HADOOP_HOME/bin
 export HADOOP_SBIN=$HADOOP_HOME/sbin
