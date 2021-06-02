@@ -1,0 +1,1 @@
+PUT 'table name', 'row', 'Column family:column name', 'new value'
