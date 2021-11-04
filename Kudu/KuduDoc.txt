@@ -42,7 +42,7 @@ HDFS:
 	HDFS is a file system (Hadoop Distributed file system).
 	
 	Very flexible, to store any type of data in any format, no contrains on type, format of data (text, audio, video), 
-	essentially it stores bytes thus doesn't store about type of data. 
+	essentially it stores bytes thus doesn't care about type of data. 
 	
 	HDFS doesn't interpret the bytes as it lands in. You just copy the file in, HDFS just takes in these bytes and land 
 	them on disk. Thus we essentially gets the raw throughput of the disk devices then we put/get data in/out of HDFS.
@@ -61,7 +61,7 @@ HBase:
 	HBase is born out of introducing mutability and more structure, so developers added the idea of Rowkey and rows and 
 	columns.
 	So we got richer semantics of update, insert, fetch.
-	Still very flexible as it doesn't require to specify any schema upfront, we can just put any data in, it treat all 
+	Still very flexible as it doesn't require to specify any schema upfront, we can just put ANY DATA in, it treat all 
 	the data as byte arrays. 
 	We can change the data on fly, no need to describe it ahead of time so it retains some of the flexibity of HDFS and 
 	it adds this real time data serving component where we can access any one of these rows or a small range of rowa in
@@ -99,7 +99,7 @@ Impala (How does it fits with Kudu for Relational data applications)
 
 	Runs on same nodes that runs Hadoop processes.
 
-	External tools can use JBBC and ODBS connections to runs SQL queries.
+	External tools can use JDBC and ODBC connections to runs SQL queries.
 
 	SQL standard is SQL 92 + some later extensions.
 
@@ -163,7 +163,7 @@ Real time data ingestion is very important + Fast scans
 
 Support for many column encodings and compression schemes
 	Encodings: Delta, Dictionary, Bitshuffle
-	Compression: LZ4, gzip, bzip2  (recused data volume -> reduces I/O time)
+	Compression: LZ4, gzip, bzip2  (reduces data volume -> reduces I/O time)
 
 Supports flexible set of partitioning schemes (multi dimensional partitions, like hash and time simultaneously)
 Hash partitioning is very useful (than range partitioning). I believe it can automatic bucket the data using modulo over
