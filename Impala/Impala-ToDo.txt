@@ -1,0 +1,6 @@
+https://impala.apache.org/docs/build/html/topics/impala_perf_stats.html#perf_table_stats
+https://impala.apache.org/docs/build/html/topics/impala_explain.html#explain
+https://impala.apache.org/docs/build/html/topics/impala_show.html#show
+https://impala.apache.org/docs/build/html/topics/impala_perf_stats.html#perf_stats
+https://impala.apache.org/docs/build/html/topics/impala_shell_commands.html
+https://kudu.apache.org/docs/developing.html#view_api
