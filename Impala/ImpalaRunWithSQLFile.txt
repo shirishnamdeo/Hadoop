@@ -1,0 +1,1 @@
+impala-shell -i <impalad:port> -f test_fl.sql --var=variable_name=100

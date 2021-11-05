@@ -1,0 +1,10 @@
+INSERT INTO TABLE <table_name> ( 
+col_name1,
+col_name2,
+col_name3, ..
+)
+SELECT 
+col_name1,
+col_name2,
+col_name3, ..
+FROM <table> WHERE condition(s);

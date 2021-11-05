@@ -1,0 +1,14 @@
+https://impala.apache.org/docs/build/html/topics/impala_compute_stats.html#compute_stats
+https://impala.apache.org/docs/build/html/topics/impala_perf_stats.html#perf_stats
+
+SHOW TABLE STATS  <table_name>;
+show column stats <table_name>;
+COMPUTE STATS     <table_name>;
+
+SHOW PARTITIONS   <table_name>;
+
+COMPUTE INCREMENTAL STATS <table_name>;
+DROP INCREMENTAL STATS    <table_name>;
+
+For a particular table, use either COMPUTE STATS or COMPUTE INCREMENTAL STATS, but never combine the two or alternate between them. 
+If you switch from COMPUTE STATS to COMPUTE INCREMENTAL STATS during the lifetime of a table, or vice versa, drop all statistics by running DROP STATS before making the switch.

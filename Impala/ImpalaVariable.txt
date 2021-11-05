@@ -1,0 +1,9 @@
+impala-shell --var=tname=table1 --var=colname=x --var=coltype=string -q 'CREATE TABLE ${var:tname} (${var:colname} ${var:coltype}) STORED AS PARQUET'
+
+-> To start the shell with variables values
+impala-shell --quiet --var=tname=table1
+[impala] > SELECT COUNT(*) FROM ${var:tname};
+
+-> Or set them in interactive shell
+[impala] > SET VAR:tname=table2;
+[impala] > SELECT COUNT(*) FROM ${var:tname};

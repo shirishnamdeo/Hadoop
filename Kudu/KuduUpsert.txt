@@ -38,6 +38,15 @@ UPSERT INTO production_table SELECT * FROM staging_table;
 UPSERT INTO production_table SELECT * FROM staging_table WHERE c1 IS NOT NULL AND c2 > 0;
 
 
+-- This below query also update multiple records in target table using selected records from a dataset.
+WITH DESC_DATA AS (
+   SELECT T1.validation_event_cd, T1.rule_version, T3.rule_requester, T3.rule_business_descr FROM <database>.<table_name>
+   INNER JOIN [...]
+   WHERE [...]
+)
+UPSERT INTO TABLE <database>.<table_name> (validation_event_cd, rule_version, rule_requester, rule_business_descr) SELECT DESC_DATA.validation_event_cd, DESC_DATArule_version, DESC_DATA.rule_requester, DESC_DATA.rule_business_descr;
+
+
 ------------------------------------------------------------------------------------------------------------------------
 
 Usage notes:

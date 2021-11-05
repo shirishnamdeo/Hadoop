@@ -1,0 +1,15 @@
+https://impala.apache.org/docs/build/html/topics/impala_impala_shell.html
+
+impala-shell
+-q  :-> To issue a single query from the command line
+-f  :-> To issue SQLs from file
+-o  :-> To save the query output in a OUTPUT_FILE.txt
+-B  :-> Turns off pretty-printing, so that you can produce comma-separated, tab-separated, or other delimited text files as output.
+
+--var=variable_name=value
+--output_delimiter :-> Option to choose the delimiter character; the default is the tab character.
+
+
+
+impala-shell --var=tname=table1 --var=colname=x --var=coltype=string -q 'CREATE TABLE ${var:tname} (${var:colname} ${var:coltype}) STORED AS PARQUET'
+

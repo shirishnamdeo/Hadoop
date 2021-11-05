@@ -1,0 +1,1 @@
+INSERT INTO TABLE (attribute1, attribute2) VALUES ("attribute1", "\${DB_SCHEMA}.<table_name>");

@@ -1,0 +1,2 @@
+GRANT  SELECT ON TABLE <table_name> TO ROLE f1xmdd_adm;
+REVOKE SELECT ON TABLE <table_name> FROM ROLE f1xmdd_adm;

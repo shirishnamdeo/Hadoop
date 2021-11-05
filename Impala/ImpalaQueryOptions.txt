@@ -1,0 +1,2 @@
+https://docs.cloudera.com/runtime/7.2.10/impala-sql-reference/topics/impala-query-options.html#query_options__mem_limit
+--query_option=MEM_LIMIT=5g

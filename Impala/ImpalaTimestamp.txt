@@ -32,6 +32,8 @@ SELECT CAST('08:30:00' as TIMESTAMP);    --> 08:30:00
 SELECT CAST("01-01-2020" AS TIMESTAMP);  --> NULL  : Non ISO format will be CAST to NULL
 
 
+SELECT FROM_TIMESTAMP(now(), 'yyyy-mm-dd hh:mm:ss'); -> 2021-01-01 00:00:00
+
 
 SELECT now();                            --> (2019-11-07 12:12:53.636559000) : Time in NanoSeconds
 SELECT current_timestamp();              --> Alisa of now(), both returns timestamt datatype.

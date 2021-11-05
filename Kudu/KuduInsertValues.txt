@@ -13,3 +13,12 @@ INSERT INTO my_first_table VALUES (1, "john"), (2, "jane"), (3, "jim");
 INSERT INTO my_kudu_table
   SELECT * FROM legacy_data_import_table;
 
+
+
+INSERT INTO my_kudu_table
+	(attribute1, attribute2, attribute3, ...)
+VALUES
+	('value1', 'value2', 'value3', ...),
+	('value1', 'value2', 'value3', ...),
+	('value1', 'value2', 'value3', ...),
+	('value1', 'value2', 'value3', ...);
