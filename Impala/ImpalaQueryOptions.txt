@@ -1,2 +1,17 @@
+<<<<<<< HEAD
 https://docs.cloudera.com/runtime/7.2.10/impala-sql-reference/topics/impala-query-options.html#query_options__mem_limit
 --query_option=MEM_LIMIT=5g
+=======
+https://docs.cloudera.com/runtime/7.2.10/impala-sql-reference/topics/impala-query-options.html
+
+You can set query options directly through the JDBC and ODBC interfaces by using the SET statement.
+You can set query options for an impala-shell session by specifying one or more command-line arguments of the form --query_option=option=value
+
+Options with Boolean parameters can be set to 1 or true to enable, or 0 or false to turn off.
+
+
+MEM_LIMIT
+
+DISABLE_UNSAFE_SPILLS
+Enable this option if you prefer to have queries fail when they exceed the Impala memory limit, rather than write temporary data to disk.
+>>>>>>> dfbd3628c3dbc3852c6d9babd18b0d62334b62c2
