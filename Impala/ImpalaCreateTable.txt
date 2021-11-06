@@ -1,6 +1,6 @@
-CREATE TABLE IF NOT EXISTS gcuat.impala_table (
-column_name1 STRING,
-column_name2 DOUBLE
+CREATE TABLE IF NOT EXISTS <database>.<table_name> (
+	column_name1 STRING,
+	column_name2 DOUBLE
 );
 
 

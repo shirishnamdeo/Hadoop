@@ -1,0 +1,91 @@
+https://impala.apache.org/docs/build/html/topics/impala_compute_stats.html
+https://impala.apache.org/docs/build/html/topics/impala_perf_stats.html#perf_table_stats
+https://impala.apache.org/docs/build/html/topics/impala_drop_stats.html
+---------------------------------------------------------------------------------------------------
+
+SHOW TABLE STATS <table_name>;
+SHOW COLUMN STATS <table_name>;
+
+---------------------------------------------------------------------------------------------------
+
+COMPUTE INCREMENTAL STATS <table_name> partition(reporting_year=reporting_year);
+
+
+COMPUTE STATS [db_name.]table_name  [ ( column_list ) ] [TABLESAMPLE SYSTEM(percentage) [REPEATABLE(seed)]]
+column_list ::= column_name [ , column_name, ... ]
+
+COMPUTE INCREMENTAL STATS [db_name.]table_name [PARTITION (partition_spec)]
+partition_spec ::= simple_partition_spec | complex_partition_spec
+simple_partition_spec ::= partition_col=constant_value
+complex_partition_spec ::= comparison_expression_on_partition_co
+
+
+
+COMPUTE INCREMENTAL STATS INT_PARTITIONS PARTITION (x < 100);
+COMPUTE INCREMENTAL STATS INT_PARTITIONS PARTITION (x in (100, 150, 200));
+COMPUTE INCREMENTAL STATS INT_PARTITIONS PARTITION (x between 100 and 175);
+COMPUTE INCREMENTAL STATS INT_PARTITIONS PARTITION (x in (100, 150, 200) or x < 100);
+COMPUTE INCREMENTAL STATS INT_PARTITIONS PARTITION (x != 150);
+
+COMPUTE INCREMENTAL STATS <table_name> partition(reporting_year=reporting_year);
+-- How this is working? How 'reporting_year=reporting_year' is evaluating and executing? Isn't this dynamic? Is it computing the STATS for the whole table?
+
+
+COMPUTE INCREMENTAL STATS <table_name> partition(reporting_year='2019');
+
+---------------------------------------------------------------------------------------------------
+
+DROP STATS [database_name.]table_name
+DROP INCREMENTAL STATS [database_name.]table_name PARTITION (partition_spec)
+DROP STATS <table_name>;  [Drops both Table Stats and Column Stats]
+
+
+---------------------------------------------------------------------------------------------------
+
+TABLE STATISTICS:
+
+
+---------------------------------------------------------------------------------------------------
+
+COLUMN STATISTICS:
+
+The values for the maximum and average sizes of some types are always available, because those figures are constant for numeric and other fixed-size types. Exmaple includes:
+	TIMESTAMP
+	INT
+	SMALLINT
+	BOOLEAN
+	FLOAT
+	DECIMAL??
+
+
+For column statistics to be effective in Impala, you also need to have table statistics for the applicable tables, as described in Overview of Table Statistics. 
+When you use the Impala COMPUTE STATS statement, both table and column statistics are automatically gathered at the same time, for all columns in the table.
+
+For a partitioned table, Column stats apply to the entire table, not to individual partitions.
+
+---------------------------------------------------------------------------------------------------
+
+** 
+For a particular table, use either COMPUTE STATS or COMPUTE INCREMENTAL STATS, but never combine the two or alternate between them. 
+If you switch from COMPUTE STATS to COMPUTE INCREMENTAL STATS during the lifetime of a table, or vice versa, drop all statistics by running DROP STATS before making the switch.
+
+
+---------------------------------------------------------------------------------------------------
+COMPUTE INCREMENTAL STATS:
+
+When you compute incremental statistics for a partitioned table, by default Impala only processes those partitions that do not yet have incremental statistics. 
+By processing only newly added partitions, you can keep statistics up to date without incurring the overhead of reprocessing the entire table each time.
+
+Issuing a COMPUTE INCREMENTAL STATS without a partition clause causes Impala to compute incremental stats for all partitions that do not already have incremental stats. 
+This might be the entire table when running the command for the first time, but subsequent runs should only update new partitions. 
+You can force updating a partition that already has incremental stats by issuing a DROP INCREMENTAL STATS before running COMPUTE INCREMENTAL STATS.
+
+In cases where new files are added to an existing partition, issue a REFRESH statement for the table, followed by a DROP INCREMENTAL STATS and COMPUTE INCREMENTAL STATS sequence for the changed partition.
+
+The DROP INCREMENTAL STATS statement operates only on a single partition at a time. To remove statistics (whether incremental or not) from all partitions of a table, issue a DROP STATS statement with no INCREMENTAL or PARTITION clauses.
+
+The PARTITION clause is only allowed in combination with the INCREMENTAL clause. It is optional for COMPUTE INCREMENTAL STATS, and required for DROP INCREMENTAL STATS. 
+Whenever you specify partitions through the PARTITION (partition_spec) clause in a COMPUTE INCREMENTAL STATS or DROP INCREMENTAL STATS statement, you must include all the partitioning columns in the specification, and specify constant values for all the partition key columns.
+
+
+

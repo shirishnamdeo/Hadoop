@@ -1,15 +1,24 @@
 https://impala.apache.org/docs/build/html/topics/impala_impala_shell.html
+https://impala.apache.org/docs/build/html/topics/impala_shell_options.html
 
 impala-shell
--q  :-> To issue a single query from the command line
--f  :-> To issue SQLs from file
+-q  :-> [query]      To issue a single query from the command line
+-f  :-> [query_file] To issue SQLs from file
 -o  :-> To save the query output in a OUTPUT_FILE.txt
 -B  :-> Turns off pretty-printing, so that you can produce comma-separated, tab-separated, or other delimited text files as output.
 
 --var=variable_name=value
 --output_delimiter :-> Option to choose the delimiter character; the default is the tab character.
 
-
+--quiet :-> do no produce any impala releted output on the console.
+--database :-> Specifies the database to be used on startup. Same as running the USE statement after connecting. If not specified, a database named DEFAULT is used.
+--ssl :-> Enables TLS/SSL for impala-shell.
+--config_file :-> Specifies the path of the file containing impala-shell configuration settings. The default is /etc/impalarc.
 
 impala-shell --var=tname=table1 --var=colname=x --var=coltype=string -q 'CREATE TABLE ${var:tname} (${var:colname} ${var:coltype}) STORED AS PARQUET'
 
+
+
+impala-shell -i <hostname> --database=<database_name> --kerberos --kerberos_service_name=<> --ssl --ca_cert=/otp/pki/etc/tca/<filename.pem> 
+	--query_option=SYNC_DDL=1
+	--query_option=DISABLE_UNSAFE_SPILLS=FALSE

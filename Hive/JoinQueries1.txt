@@ -1,4 +1,4 @@
-CREATE TABLE gbtaxdev.employee ( 
+CREATE TABLE <database>.employee ( 
     emp_name           STRING COMMENT 'Employee Name',
     emp_company        STRING,
     emp_dept           STRING
@@ -6,17 +6,17 @@ CREATE TABLE gbtaxdev.employee (
 COMMENT 'Employees Table'
 ROW FORMAT DELIMITED
 FIELDS TERMINATED BY ','
-LOCATION '/apps/gbtaxdev/dwh/gbtaxdev.db/employee';
+LOCATION '/apps/<tenant_name>/dwh/<database>.db/employee';
 
 
-CREATE TABLE gbtaxdev.department( 
+CREATE TABLE <database>.department( 
     dept_name          STRING,
     dept_company       STRING                  
 )                              
 COMMENT 'Department Table';
 
 
-CREATE TABLE gbtaxdev.company(
+CREATE TABLE <database>.company(
     company_name       STRING
 )
 COMMENT 'Company Table';

@@ -1,9 +1,12 @@
 show partitions dhtax_tm1connect_ibperf;
 
-> ALTER TABLE dhtax_tm1connect_ibperf DROP IF EXISTS PARTITION (bus_date='2018-09-21');
+ALTER TABLE <table_name> DROP IF EXISTS PARTITION (bus_date='2018-09-21');
 
+ALTER TABLE <table_name> ADD PARTITION (i_category='Camping');
 
- msck repair table dhtax_tm1connect_ibperf;
+ALTER TABLE <table_name> RECOVER PARTITIONS;
+
+MSCK REPAIR TABLE <table_name>;
 
 
 
@@ -38,3 +41,5 @@ FROM typeof_example LIMIT 1;
 
 ------------------------------------------------------------------------------------------------------------------------------------------------------
 
+Kudu considerations:
+The COMPUTE STATS statement applies to Kudu tables. Impala only computes the number of rows for the whole Kudu table, partition level row counts are not available.
