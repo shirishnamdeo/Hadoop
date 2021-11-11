@@ -1,0 +1,38 @@
+SYNTAX:
+UPDATE [database_name.]table_name SET col = val [, col = val ... ]
+  [ FROM joined_table_refs ]
+  [ WHERE where_conditions ]
+
+---------------------------------------------------------------------------------------------------
+
+UPDATE <database-name>.<table_name> SET taxpercantage='1' WHERE entity = 'S11' AMD taxcategory = 'EXEMPT';
+UPDATE <database-name>.<table_name> SET taxpercantage='1' WHERE entity = 'S11';
+
+UPDATE <database-name>.<table_name> SET taxpercantage='1' WHERE taxpercantage < '0.10';
+
+
+NOTE:
+None of the columns that make up the primary key can be updated by the SET clause.
+If the WHERE clause is omitted, all rows in the table are updated.
+The optional FROM clause lets you restrict the updates to only the rows in the specified table that are part of the result set for a join query.
+
+
+Set all rows to the same value for column c3 (non-primary-key-column).
+UPDATE kudu_table SET c3 = 'not applicable';
+UPDATE kudu_table SET c3 = NULL WHERE c1 > 100 AND c3 IS NULL;
+
+Does not update any rows, because the WHERE condition is always false.
+UPDATE kudu_table SET c3 = 'impossible' WHERE 1 = 0;
+
+Change the values of multiple columns in a single UPDATE statement.
+UPDATE kudu_table SET c3 = upper(c3), c4 = FALSE, c5 = 0 WHERE c6 = TRUE;
+
+
+Uppercase a column value, only for rows that have an ID that matches the value from another table.
+UPDATE kudu_table SET c3 = upper(c3) FROM kudu_table JOIN non_kudu_table ON kudu_table.id = non_kudu_table.id;
+
+Same effect as previous statement. Assign table aliases in FROM clause, then refer to short names elsewhere in the statement.
+UPDATE t1 SET c3 = upper(c3) FROM kudu_table t1 JOIN non_kudu_table t2 ON t1.id = t2.id;
+
+Same effect as previous statements, but more efficient. Use WHERE clause to skip updating values that are already uppercase.
+UPDATE t1 SET c3 = upper(c3) FROM kudu_table t1 JOIN non_kudu_table t2 ON t1.id = t2.id WHERE c3 != upper(c3);

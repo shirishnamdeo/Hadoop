@@ -1,6 +1,0 @@
-
-
-UPDATE <database-name>.dhtax_category_kudu SET taxpercantage='1' WHERE entity = 'S11' AMD taxcategory = 'EXEMPT';
-UPDATE <database-name>.dhtax_category_kudu SET taxpercantage='1' WHERE entity = 'S11';
-
-UPDATE <database-name>.dhtax_category_kudu SET taxpercantage='1' WHERE taxpercantage < '0.10';

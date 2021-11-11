@@ -1,0 +1,1 @@
+https://impala.apache.org/docs/build/html/topics/impala_create_table.html

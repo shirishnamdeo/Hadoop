@@ -1,21 +1,8 @@
 -- https://impala.apache.org/docs/build/html/topics/impala_upsert.html
 
+---------------------------------------------------------------------------------------------------
 
-UPSERT Statement:
-
-Acts as a combination of the INSERT and UPDATE statements. For each row processed by the UPSERT statement:
-	
-	If another row already exists with the same set of primary key values, the other columns are updated to match the 
-	values from the row being "UPSERTed".
-	
-	If there is not any row with the same set of primary key values, the row is created, the same as if the INSERT 
-	statement was used.
-
-This statement only works for Impala tables that use the Kudu storage engine.
-
-------------------------------------------------------------------------------------------------------------------------
-
-Syntax:
+SYNTAX:
 
 
 UPSERT [hint_clause] INTO [TABLE] [db_name.]table_name
@@ -30,7 +17,17 @@ hint_clause ::= [SHUFFLE] | [NOSHUFFLE]
 The select_statement clause can use the full syntax, such as WHERE and join clauses, as SELECT Statement.
 
 
+---------------------------------------------------------------------------------------------------
 
+
+UPSERT Statement:
+
+Acts as a combination of the INSERT and UPDATE statements. For each row processed by the UPSERT statement:
+	If another row already exists with the same set of primary key values, the other columns are updated to match the values from the row being "UPSERTed".
+	If there is not any row with the same set of primary key values, the row is created, the same as if the INSERT statement was used.
+
+
+---------------------------------------------------------------------------------------------------
 
 Examples:
 UPSERT INTO kudu_table (pk, c1, c2, c3) VALUES (0, 'hello', 50, true), (1, 'world', -1, false);
@@ -47,12 +44,12 @@ WITH DESC_DATA AS (
 UPSERT INTO TABLE <database>.<table_name> (validation_event_cd, rule_version, rule_requester, rule_business_descr) SELECT DESC_DATA.validation_event_cd, DESC_DATArule_version, DESC_DATA.rule_requester, DESC_DATA.rule_business_descr;
 
 
-------------------------------------------------------------------------------------------------------------------------
+---------------------------------------------------------------------------------------------------
 
 Usage notes:
 
-If you specify a column list, any omitted columns in the inserted or updated rows are set to their default value (if the
-column has one) or NULL (if the column does not have a default value). 
+If you specify a column list, any omitted columns in the inserted or updated rows are set to their default value (if the column has one) 
+or NULL (if the column does not have a default value). 
 Therefore, if a column is not nullable and has no default value, it must be included in the column list for any UPSERT 
 statement. 
 
@@ -61,12 +58,5 @@ statement.
 
 Because Kudu tables can efficiently handle small incremental changes, the VALUES clause is more practical to use with 
 Kudu tables than with HDFS-based tables.
-
-Important: 
-After adding or replacing data in a table used in performance-critical queries, issue a COMPUTE STATS statement to make 
-sure all statistics are up-to-date. Consider updating statistics for a table after any INSERT, LOAD DATA, or CREATE 
-TABLE AS SELECT statement in Impala, or after loading data through Hive and doing a REFRESH table_name in Impala. 
-This technique is especially important for tables that are very large, used in join queries, or both.
-
 
 ------------------------------------------------------------------------------------------------------------------------
