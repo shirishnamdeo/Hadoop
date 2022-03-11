@@ -36,3 +36,5 @@ UPDATE t1 SET c3 = upper(c3) FROM kudu_table t1 JOIN non_kudu_table t2 ON t1.id 
 
 Same effect as previous statements, but more efficient. Use WHERE clause to skip updating values that are already uppercase.
 UPDATE t1 SET c3 = upper(c3) FROM kudu_table t1 JOIN non_kudu_table t2 ON t1.id = t2.id WHERE c3 != upper(c3);
+
+UPDATE table_name SET column_value = replace(column_value, "STRING-OLD", "STRING-NEW") WHERE contion(s);
