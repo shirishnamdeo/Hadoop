@@ -17,19 +17,11 @@ ex: SELECT my_count(col_name) from table;
 
 
 -- Copy the JAR from PARCELS to HDFS
-create function my_lower(string) returns string location '/apps/eutaxdev/user/shirish/hive-jdbc-1.1.0-cdh5.14.2-standalone.jar' symbol='org.apache.hadoop.hive.ql.udf.UDFLower';
+create function my_lower(string) returns string location '/apps/<database-name>/user/shirish/hive-jdbc-1.1.0-cdh5.14.2-standalone.jar' symbol='org.apache.hadoop.hive.ql.udf.UDFLower';
 
 
 How to show all the UDF created in impala??
 SHOW FUNCTIONS;
-
-
-select my_lower('Some String NOT ALREADY LOWERCASE');
-Query: select my_lower('Some String NOT ALREADY LOWERCASE')
-Query submitted at: 2019-06-06 08:26:15 (Coordinator: https://usld2604184:25000)
-Query progress can be monitored at: https://usld2604184:25000/query_plan?query_id=d14bc3fbd6f9ed12:d56e550200000000
-WARNINGS: ImpalaRuntimeException: Unable to find class.
-CAUSED BY: ClassNotFoundException: org.apache.hadoop.hive.ql.udf.UDFLower
 
 
 -- To DROP a function!!

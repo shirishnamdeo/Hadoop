@@ -1,7 +1,7 @@
 Why this query is not working?
-INSERT OVERWRITE TABLE dhtax_tp_clientrevenue_equity SELECT * FROM dhtax_tp_clientrevenue_equity;
+INSERT OVERWRITE TABLE <table-name> SELECT * FROM <table-name>;
 
-Table: dhtax_tp_clientrevenue_equity is partitioned on reporting_date.
+Table: <table-name> is partitioned on reporting_date.
 ERROR: AnalysisException: Not enough partition columns mentioned in query. Missing columns are: reporting_year
 
 Seems like if table is partitioned then we need to overwrite every like:

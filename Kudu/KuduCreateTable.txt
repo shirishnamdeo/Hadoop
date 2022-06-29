@@ -17,12 +17,12 @@ TBLPROPERTIES (
 
 
 
-CREATE EXTERNAL TABLE dhtax_tm1connect_ibperf
+CREATE EXTERNAL TABLE <table-name>
 STORED AS KUDU
 TBLPROPERTIES (
-  'kudu.table_name' = 'dhtax_tm1connect_ibperf_kudu'
+  'kudu.table_name' = '<table-name>'
 );
-ERROR: AnalysisException: Table already exists: <dtabase-name>.<dhtax_tm1connect_ibperf>
+ERROR: AnalysisException: Table already exists: <dtabase-name>.<table-name>
 -- As the table already exists in impala, we cant recreate it again in impala.
 
 
@@ -80,11 +80,11 @@ STORED AS KUDU;
 CREATE TABLE AS SELECT:
 
 
-CREATE TABLE <database-name>.dhtax_category_kudu
+CREATE TABLE <database-name>.<table-name>
 PRIMARY KEY (entity, taxcategory)
 PARTITION BY HASH(entity) PARTITIONS 8
 STORED AS KUDU
-AS SELECT * FROM <database-name>.dhtax_category;
+AS SELECT * FROM <database-name>.<table-name2>;
 
 By default: AUTO_ENCODING, and DEFAULT_COMPRESSION
 

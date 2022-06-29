@@ -1,0 +1,8 @@
+parquet-tools schema <parquet-file-name>
+parquet-tools meta   <parquet-file-name>
+parquet-tools head -n 1 <parquet-file-name>
+parquet-tools cat --json  <parquet-file-name>
+
+
+hadoop jar parquet-tools-1.9.0.jar schema hdfs://path/to/file.snappy.parquet ?? Does this work
+parquet-tools head hdfs://localhost/<hdfs-path> | less

@@ -2,16 +2,16 @@ CREATE TABLE internal1 (col1 string) LOCATION '/user/demo/food';
 --location is the directory name where the data file is placed on hadoop cluster.
 
 
-CREATE EXTERNAL TABLE chtaxprd.testtable1 (
+CREATE EXTERNAL TABLE <database-name>.testtable1 (
 book_id string, 
 bus_date string,
 product_type1 string,
 )
-LOCATION '/apps/chtaxprd/data/testtable1/';
+LOCATION '/apps/<database-name>/data/testtable1/';
 
 
 
-CREATE TABLE xpcmldev1.zTestCreateInternalTable (
+CREATE TABLE <database-name>.zTestCreateInternalTable (
 book_id string, 
 bus_date string,
 product_type1 string,
@@ -21,14 +21,14 @@ amt_tp string,
 country_code string,
 position Int
 )
-LOCATION '/apps/xpcmldev1/data/testData_2017-12-21_10RecordSelectedColumns/';
+LOCATION '/apps/<database-name>/data/testData_2017-12-21_10RecordSelectedColumns/';
 
-CREATE TABLE xpcmldev1.zTestCreateInternalTable2 (book_id string,bus_date string,product_type1 string,product_id string,structure_id string,amt_tp string,country_code string,position Int) Location '/apps/xpcmldev1/data/testData_2017-12-21_10RecordSelectedColumns/';
+CREATE TABLE <database-name>.zTestCreateInternalTable2 (book_id string,bus_date string,product_type1 string,product_id string,structure_id string,amt_tp string,country_code string,position Int) Location '/apps/<database-name>/data/testData_2017-12-21_10RecordSelectedColumns/';
 
 #if location is not specified, then it will work.. ??Why this happen?
 
 
-CREATE TABLE xpcmldev1.zTestCreateInternalTable (book_id string,bus_date string,product_type1 string,product_id string,structure_id string,amt_tp string,country_code string,position Int) ROW FORMAT DELIMITED FIELDS TERMINATED BY ‘,’;
+CREATE TABLE <database-name>.zTestCreateInternalTable (book_id string,bus_date string,product_type1 string,product_id string,structure_id string,amt_tp string,country_code string,position Int) ROW FORMAT DELIMITED FIELDS TERMINATED BY ‘,’;
 
 hive> show create table ztestcreateinternaltable;
 OK
@@ -48,22 +48,22 @@ STORED AS INPUTFORMAT
 OUTPUTFORMAT 
   'org.apache.hadoop.hive.ql.io.HiveIgnoreKeyTextOutputFormat'
 LOCATION
-  'hdfs://xpcmldev/apps/xpcmldev1/dwh/xpcmldev1.db/ztestcreateinternaltable'
+  'hdfs://<database-name>/apps/<database-name>/dwh/<database-name>.db/ztestcreateinternaltable'
 TBLPROPERTIES (
   'transient_lastDdlTime'='1514275537')
 
   
-#an empty directory is created into /apps/xpcmldev1/dwh/xpcmldev1.db/ztestcreateinternaltable2, with no data. When the table is droped with the drop table statement, this directory is also deleted. 
+#an empty directory is created into /apps/<database-name>/dwh/<database-name>.db/ztestcreateinternaltable2, with no data. When the table is droped with the drop table statement, this directory is also deleted. 
  
  #loading the data in the internal table;
-load data inpath '/apps/xpcmldev1/data/testData_2017-12-21_10RecordSelectedColumns/part-m-00000' into table ztestcreateinternaltable;
+load data inpath '/apps/<database-name>/data/testData_2017-12-21_10RecordSelectedColumns/part-m-00000' into table ztestcreateinternaltable;
 
 #for overwriting into the table use the keyword overright
 #LOAD INPATH '/user/chris/data/testdata' OVERWRITE INTO TABLE user
 
 
 #loading the data intot the above internal table will move the file from the origional location, thus after the load statement, the origional file will not be there anymore.
-#we can see the same file in the dwh/xpcmldev1.db/<tablename> directory/
+#we can see the same file in the dwh/<database-name>.db/<tablename> directory/
 #after loading data into hive, to reflect it into impala. we can use 'refresh tablename'.
 
 

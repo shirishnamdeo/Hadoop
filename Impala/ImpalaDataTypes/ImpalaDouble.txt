@@ -1,0 +1,10 @@
+CREATE TABLE t1 (x DOUBLE);
+SELECT CAST(1000.5 AS DOUBLE);
+
+Range: 4.94065645841246544e-324d .. 1.79769313486231570e+308, positive or negative
+
+Precision: 15 to 17 significant digits, depending on usage. The number of significant digits does not depend on the position of the decimal point.
+
+
+Internal details: Represented in memory as an 8-byte value
+

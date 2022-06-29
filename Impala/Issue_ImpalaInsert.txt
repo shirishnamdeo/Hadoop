@@ -1,5 +1,5 @@
 
-INSERT OVERWRITE TABLE dhtax_tp_clientrevenue_equity(
+INSERT OVERWRITE TABLE <table-name>(
 reporting_month      ,
 employee_pid_id      ,
 employee             ,
@@ -42,12 +42,12 @@ SELECT
     now()                     AS stamp_add_dtime      ,
     now()                     AS stamp_update_dtime   ,
     reporting_year            AS reporting_year       
-FROM dhtax_tp_clientrevenue_equity_stg;
+FROM <table-name1>;
 
 -- So even though I am giving alias name to every field, when inserting into core table if the select and inset has diferent order then everything is messed up. 
 
 Answer:
-INSERT OVERWRITE TABLE dhtax_tp_clientrevenue_equity(
+INSERT OVERWRITE TABLE <table-name>(
 a,
 b,
 c,
@@ -57,7 +57,7 @@ SELECT
     b AS b ,
     a AS a ,
     c AS c 
-FROM dhtax_tp_clientrevenue_equity_stg;  
+FROM <table-name1>;  
 
 Why Impala insert into the incorrect columns? I have read in some articles that the order matters in Impala, irrespective of the alias name I give to attributes in SELECT query. 
 Yes - only order matters. You can call them whatever you want in SELECT. So giving an alias name is of no use in IMPALA.
@@ -67,7 +67,7 @@ Yes - only order matters. You can call them whatever you want in SELECT. So givi
 
 
 
-SELECT DISTINCT product_line_l2_name FROM dhtax_tp_clientrevenue_equity_stg;
+SELECT DISTINCT product_line_l2_name FROM <table-name>;
 +----------------------+
 | product_line_l2_name |
 +----------------------+
@@ -76,7 +76,7 @@ SELECT DISTINCT product_line_l2_name FROM dhtax_tp_clientrevenue_equity_stg;
 +----------------------+
 
 
-SELECT DISTINCT reporting_month FROM dhtax_tp_clientrevenue_equity ;                                                                                                                                                                                                                      
+SELECT DISTINCT reporting_month FROM <table-name>;                                                                                                                                                                                                                      
 +-----------------+
 | reporting_month |
 +-----------------+
@@ -86,5 +86,5 @@ SELECT DISTINCT reporting_month FROM dhtax_tp_clientrevenue_equity ;
 
 
 
-SELECT * FROM dhtax_tp_clientrevenue_equity_stg WHERE legal_entity_id = 'H11' and department_cd = 'J21J11' and reporting_month = '1' and employee_pid_id = 'M535753';
-SELECT * FROM dhtax_tp_clientrevenue_equity WHERE legal_entity_id = 'H11' and department_cd = 'J21J11' and reporting_month = '1' and employee_pid_id = 'M535753';
+SELECT * FROM <table-name> WHERE legal_entity_id = 'H11' and department_cd = 'J21J11' and reporting_month = '1' and employee_pid_id = 'M535753';
+SELECT * FROM <table-name> WHERE legal_entity_id = 'H11' and department_cd = 'J21J11' and reporting_month = '1' and employee_pid_id = 'M535753';

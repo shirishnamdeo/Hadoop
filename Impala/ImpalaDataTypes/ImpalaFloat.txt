@@ -1,0 +1,12 @@
+
+Range: 1.40129846432481707e-45 .. 3.40282346638528860e+38, positive or negative
+
+Precision: 6 to 9 significant digits, depending on usage. The number of significant digits does not depend on the position of the decimal point.
+
+Internal details: Represented in memory as a 4-byte value.
+
+
+Usage notes:
+Impala does not evaluate NaN (not a number) as equal to any other numeric values, including other NaN values. For example, the following statement, which evaluates equality between two NaN values, returns false:
+
+SELECT CAST('nan' AS FLOAT)=CAST('nan' AS FLOAT);

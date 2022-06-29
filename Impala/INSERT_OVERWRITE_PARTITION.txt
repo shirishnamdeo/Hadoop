@@ -1,4 +1,4 @@
-INSERT OVERWRITE wexb_fact_srep_ongoing_data PARTITION(year)	
+INSERT OVERWRITE <table-name> PARTITION(year)	
 SELECT
 org,le_desc,le,artt.version_desc,artt.version,source_desc,source,region_desc,region,currency,currency_code,scenario,scenario_code,
 time_desc,time,account_desc,account,value,year_desc,
@@ -7,9 +7,9 @@ when 'May' then "05" when 'Jun' then "06" when 'Jul' then "07" when 'Aug' then "
 else Null end), "01") as int) as date_key,
 report_version,artt.year
 FROM 
-wexb_fact_srep_ongoing_data artt
+<table-name1> artt
 left outer join 
-wexb_rpt_version_weekly ver
+<table-name2> ver
 on 
 artt.version=ver.version 
 Here we have set the default value as "ONGOING"  for column version_type

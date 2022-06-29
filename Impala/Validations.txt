@@ -7,10 +7,10 @@ SELECT from_unixtime(unix_timestamp("31-12-2019"));  -> NULL (How can we use oth
 
 
 
-SELECT valid_from, from_unixtime(unix_timestamp(valid_from)) FROM dhtax_spider_stg;
+SELECT valid_from, from_unixtime(unix_timestamp(valid_from)) FROM <table-name>;
 
-SELECT COUNT(*) FROM dhtax_spider_stg WHERE from_unixtime(unix_timestamp(valid_from)) IS NULL;
-SELECT COUNT(*) FROM dhtax_spider_stg WHERE CAST(valid_from AS TIMESTAMP) IS NULL;
+SELECT COUNT(*) FROM <table-name> WHERE from_unixtime(unix_timestamp(valid_from)) IS NULL;
+SELECT COUNT(*) FROM <table-name> WHERE CAST(valid_from AS TIMESTAMP) IS NULL;
 
 
 -- IF the column contains '' or '#', then unix_timestamp will convert it to NULL. Does it convert anything else apart from date format to NULL too?
