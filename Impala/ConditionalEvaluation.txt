@@ -14,4 +14,4 @@ CASE WHEN affiliate = '' THEN 'BLANK' WHEN affiliate = ' ' THEN 'BLANK' ELSE aff
 
 IF Construct (in Select)
 
-SELECT IF (CONCAT(business_unit, '_', affiliate_mod) = bu_affiliate, 1, 0) FROM dhtax_ukvat_predict_hist; 
+SELECT IF (CONCAT(business_unit, '_', affiliate_mod) = bu_affiliate, 1, 0) FROM <table-name>; 

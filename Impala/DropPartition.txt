@@ -1,1 +1,1 @@
-ALTER TABLE pcref_aura_entitlements drop partition (bus_date = '2019-02-25');
+ALTER TABLE <table-name> drop partition (bus_date = '2019-02-25');

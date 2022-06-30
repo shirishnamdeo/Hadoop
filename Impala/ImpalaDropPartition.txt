@@ -1,0 +1,6 @@
+Internal-Table/Managed-Table
+ALTER TABLE <table_name> DROP PARTITION (<partition_col_name>='<value>') PURGE;
+
+External-Table (has two step process)
+ALTER TABLE <table_name> DROP PARTITION (<partition_col_name>='<value>');
+hdfs dfs -rm -r <partition_directory>

@@ -1,5 +1,5 @@
 
-INSERT INTO <databse-name>.dhtax_category_kudu VALUES ('S100', 'Category1', '1', NULL, 'EMEA', 'snamdeo', 'snamdeo', now(), now());
+INSERT INTO <databse-name>.<table-name> VALUES ('S100', 'Category1', '1', NULL, 'EMEA', 'snamdeo', 'snamdeo', now(), now());
 
 Inserting an existing row (with same primary key will give a warning that key already present in table) and row wont be
 inserted/updated.

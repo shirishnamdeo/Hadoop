@@ -5,7 +5,7 @@ list_namespace     	--To list namespaces
 
 describe '<table-name>'
 
-describe 'metastrd:md_feed_catalog'
+describe '<database>:<table_name>'
 --But this doesn't show up the table columns names. Infact it shows some metadata information about this table.
 
 

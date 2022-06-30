@@ -1,4 +1,4 @@
-show partitions dhtax_tm1connect_ibperf;
+show partitions <table_name>;
 
 ALTER TABLE <table_name> DROP IF EXISTS PARTITION (bus_date='2018-09-21');
 

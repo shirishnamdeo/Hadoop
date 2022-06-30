@@ -1,0 +1,7 @@
+https://docs.cloudera.com/documentation/enterprise/6/6.3/topics/impala_alter_table.html
+
+ALTER TABLE <table_name> CHANGE column_name column_name DATATYPE;
+
+INVALIDATE METADATA <table_name>;
+DROP STATS <table_name>;
+COMPUTE INCREMENTAL STATS <table_name>;

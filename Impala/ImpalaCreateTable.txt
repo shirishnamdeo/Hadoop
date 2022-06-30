@@ -1,6 +1,13 @@
 CREATE TABLE IF NOT EXISTS <database>.<table_name> (
-	column_name1 STRING,
-	column_name2 DOUBLE
+    column_tinyint TINYINT,
+    column_smallint SMALLINT,
+    column_
+    column_
+    column_
+    column_
+    column_
+    column_
+    column_
 );
 
 

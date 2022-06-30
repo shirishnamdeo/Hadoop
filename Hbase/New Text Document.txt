@@ -1,17 +1,17 @@
 No Title
 
 -- create table:
- create 'gbtaxdev:integrity_check','column_family_1'
+ create '<database-name>:integrity_check','column_family_1'
 
 
 -- to insert data in hbase:
-put 'gbtaxdev:integrity_check',1,'column_family_1:feed_id','11001'
-put 'gbtaxdev:integrity_check',1,'column_family_1:table_name','tm1connect_tpp_ibperf_detail'
-put 'gbtaxdev:integrity_check',1,'column_family_1:micro_tenant ','gbtaxdev'
-put 'gbtaxdev:integrity_check',1,'column_family_1:check_col_regex ','Y'
-put 'gbtaxdev:integrity_check',1,'column_family_1:column_1 ','category'
-put 'gbtaxdev:integrity_check',1,'column_family_1:column_2 ','years'
-put 'gbtaxdev:integrity_check',1,'column_family_1:column_3 ','time'
-put 'gbtaxdev:integrity_check',1,'column_family_1:regex1','^[A-Z]{3}'
-put 'gbtaxdev:integrity_check',1,'column_family_1:regex2','^[Y]{0-9}{3}'
-put 'gbtaxdev:integrity_check',1,'column_family_1:regex3','^[A-Z]{3}' 
+put '<database-name>:integrity_check',1,'column_family_1:feed_id','11001'
+put '<database-name>:integrity_check',1,'column_family_1:table_name','tm1connect_tpp_ibperf_detail'
+put '<database-name>:integrity_check',1,'column_family_1:micro_tenant ','<database-name>'
+put '<database-name>:integrity_check',1,'column_family_1:check_col_regex ','Y'
+put '<database-name>:integrity_check',1,'column_family_1:column_1 ','category'
+put '<database-name>:integrity_check',1,'column_family_1:column_2 ','years'
+put '<database-name>:integrity_check',1,'column_family_1:column_3 ','time'
+put '<database-name>:integrity_check',1,'column_family_1:regex1','^[A-Z]{3}'
+put '<database-name>:integrity_check',1,'column_family_1:regex2','^[Y]{0-9}{3}'
+put '<database-name>:integrity_check',1,'column_family_1:regex3','^[A-Z]{3}' 

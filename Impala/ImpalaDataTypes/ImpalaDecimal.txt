@@ -1,0 +1,19 @@
+DECIMAL[(precision[, scale])]
+
+CREATE TABLE decimals_11_8(x DECIMAL(11, 8));
+
+-> precision represents the total number of digits that can be represented regardless of the location of the decimal point.
+   This value must be between 1 and 38, specified as an integer literal
+
+-> scale represents the number of fractional digits.
+
+-> range of DECIMAL type is -10^38 +1 through 10^38 –1. 
+
+The largest value is represented by DECIMAL(38, 0).
+The most precise fractional value (between 0 and 1, or 0 and -1) is represented by DECIMAL(38, 38), with 38 digits to the right of the decimal point.
+The value closest to 0 would be .0000...1 (37 zeros and the final 1). 
+The value closest to 1 would be .999... (9 repeated 38 times).
+
+
+Memory and disk storage:
+Only the precision determines the storage size for DECIMAL values, and the scale setting has no effect on the storage size.

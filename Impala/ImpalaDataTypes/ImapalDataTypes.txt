@@ -1,0 +1,39 @@
+https://impala.apache.org/docs/build/html/topics/impala_datatypes.html
+
+
+Impala supports a limited set of implicit casts to avoid undesired results from unexpected casting behavior:
+    Impala does not implicitly cast between string and numeric or Boolean types. Always use CAST() for these conversions.
+
+    Impala does perform implicit casts among the numeric types, when going from a smaller or less precise type to a larger or more precise one. 
+    For example, Impala will implicitly convert a SMALLINT to a BIGINT or FLOAT, but to convert from DOUBLE to FLOAT or INT to TINYINT requires a call to CAST() in the query.
+
+    Impala does perform implicit casts from STRING to TIMESTAMP. Impala has a restricted set of literal formats for the TIMESTAMP data type and the FROM_UNIXTIME() format string.
+
+
+TINYINT  -> 1-byte (-128 .. 127)
+SMALLINT -> 2-byte (-32768 .. 32767)
+INT      -> 4-byte ( -2147483648 .. 2147483647)
+BIGINT   -> 8-byte (-9223372036854775808 .. 9223372036854775807)
+
+DECIMAL
+DOUBLE
+FLOAT
+
+ARRAY Complex Type (Impala 2.3 or higher only)
+
+BOOLEAN Data Type
+CHAR Data Type (Impala 2.0 or higher only)
+DATE Data Type
+
+MAP Complex Type (Impala 2.3 or higher only)
+REAL Data Type
+
+STRING Data Type
+STRUCT Complex Type (Impala 2.3 or higher only)
+TIMESTAMP Data Type
+
+VARCHAR Data Type (Impala 2.0 or higher only)
+Complex Types (Impala 2.3 or higher only)
+
+
+CREATE

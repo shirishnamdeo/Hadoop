@@ -12,6 +12,6 @@ set var:table_name='test1';
 
 
 SET VAR:TRAINING_COLUMNS=account, deptid, requestor_id, vat_rgstrn_id, tax_cd_vat, vat_calc_amt_bse, foreign_currency;
-SELECT ${VAR:TRAINING_COLUMNS} FROM dhtax_svat_invoice_myshop_stg LIMIT 10;
+SELECT ${VAR:TRAINING_COLUMNS} FROM <table-name> LIMIT 10;
 
 -- Working in impala shell, but not in HUE
